@@ -58,8 +58,8 @@ public class UsuarioController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping
-    public ResponseEntity<String> deletarUsuario(@RequestParam Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletarUsuario(@PathVariable Long id) {
         boolean deletado = service.deletarUsuario(id);
 
         if (!deletado) {
@@ -67,4 +67,10 @@ public class UsuarioController {
         }
         return ResponseEntity.status(200).body("Usuário deletado com sucesso.");
     }
+
+    /*
+    Fazer metodo que conversa com o serviço do Trovo
+
+    @PostMapping
+    */
 }
