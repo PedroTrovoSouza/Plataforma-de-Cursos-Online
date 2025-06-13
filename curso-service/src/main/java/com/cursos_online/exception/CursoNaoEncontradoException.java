@@ -1,0 +1,10 @@
+package com.cursos_online.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(code = HttpStatus.NOT_FOUND)
+public class CursoNaoEncontradoException extends RuntimeException {
+    public CursoNaoEncontradoException(String message) {
+    }
+}
