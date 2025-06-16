@@ -1,10 +1,10 @@
-package com.cursos_online.controller;
+package com.cursos.controller;
 
-import com.cursos_online.dto.curso.CursoRequestDto;
-import com.cursos_online.dto.curso.CursoResponseDto;
-import com.cursos_online.entity.Curso;
-import com.cursos_online.mapper.CursoMapper;
-import com.cursos_online.service.CursoService;
+import com.cursos.dto.curso.CursoRequestDto;
+import com.cursos.dto.curso.CursoResponseDto;
+import com.cursos.entity.Curso;
+import com.cursos.mapper.CursoMapper;
+import com.cursos.service.CursoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CursoController {
 
-    private CursoService cursoService;
+    private final CursoService cursoService;
 
     @GetMapping
     public ResponseEntity<List<CursoResponseDto>> listarCursosCadastrados(){
@@ -31,6 +31,20 @@ public class CursoController {
         return ResponseEntity.status(201).body(CursoMapper
                 .toResponseDto(cursoService
                         .cadastrarNovoCurso(curso)));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CursoResponseDto> buscarCursoPorId(@PathVariable Long id){
+        Curso curso = cursoService.buscarCursoPorId(id);
+        CursoResponseDto response = CursoMapper.toResponseDto(curso);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{nome}")
+    public ResponseEntity<CursoResponseDto> buscarCursoPorNome(@PathVariable String nome){
+        Curso curso = cursoService.buscarCursoPorNome(nome);
+        CursoResponseDto response = CursoMapper.toResponseDto(curso);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/titulo/{id}")

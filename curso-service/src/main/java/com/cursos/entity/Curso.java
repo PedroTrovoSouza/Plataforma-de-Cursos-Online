@@ -1,4 +1,4 @@
-package com.cursos_online.entity;
+package com.cursos.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

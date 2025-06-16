@@ -1,8 +1,8 @@
-package com.cursos_online.mapper;
+package com.cursos.mapper;
 
-import com.cursos_online.dto.curso.CursoRequestDto;
-import com.cursos_online.dto.curso.CursoResponseDto;
-import com.cursos_online.entity.Curso;
+import com.cursos.dto.curso.CursoRequestDto;
+import com.cursos.dto.curso.CursoResponseDto;
+import com.cursos.entity.Curso;
 
 public class CursoMapper {
 

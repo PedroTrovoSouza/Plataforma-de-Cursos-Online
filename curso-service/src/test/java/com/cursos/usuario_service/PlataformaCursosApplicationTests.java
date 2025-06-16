@@ -1,4 +1,4 @@
-package com.cursos_online.usuario_service;
+package com.cursos.usuario_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

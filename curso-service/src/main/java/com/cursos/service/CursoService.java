@@ -1,9 +1,9 @@
-package com.cursos_online.service;
+package com.cursos.service;
 
-import com.cursos_online.entity.Curso;
-import com.cursos_online.exception.CursoConflitoException;
-import com.cursos_online.exception.CursoNaoEncontradoException;
-import com.cursos_online.repository.CursoRepository;
+import com.cursos.entity.Curso;
+import com.cursos.exception.CursoConflitoException;
+import com.cursos.exception.CursoNaoEncontradoException;
+import com.cursos.repository.CursoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CursoService {
 
-    private CursoRepository cursoRepository;
+    private final CursoRepository cursoRepository;
 
     public List<Curso> listarTodosCursos(){
         return cursoRepository.findAll();
@@ -72,4 +72,8 @@ public class CursoService {
         cursoRepository.delete(cursoParaDeletar);
     }
 
+    public Curso buscarCursoPorNome(String nome) {
+        return cursoRepository.findByTitulo(nome)
+                .orElseThrow(() -> new CursoNaoEncontradoException("Curso com ID não encontrado!"));
+    }
 }

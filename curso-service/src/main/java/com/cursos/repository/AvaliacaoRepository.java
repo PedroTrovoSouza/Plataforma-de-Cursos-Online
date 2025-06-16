@@ -1,6 +1,6 @@
-package com.cursos_online.repository;
+package com.cursos.repository;
 
-import com.cursos_online.entity.Avaliacao;
+import com.cursos.entity.Avaliacao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface AvaliacaoRepository extends JpaRepository<Avaliacao, Long> {
 
-    List<Avaliacao> findAllByIdUsuario(Long idUsuario);
+    List<Avaliacao> findAllByCursoId(Long cursosId);
 
-    List<Avaliacao> findAllByCursos_Id(Long cursosId);
+    List<Avaliacao> findAllByIdUsuario(Long idUsuario);
 }

@@ -1,4 +1,4 @@
-package com.cursos_online.exception;
+package com.cursos.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
