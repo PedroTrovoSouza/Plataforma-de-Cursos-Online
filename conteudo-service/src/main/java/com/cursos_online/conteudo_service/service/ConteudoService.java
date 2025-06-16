@@ -2,9 +2,11 @@ package com.cursos_online.conteudo_service.service;
 
 import com.cursos_online.conteudo_service.dto.AtualizarConteudoDTO;
 import com.cursos_online.conteudo_service.dto.CadastrarConteudoDTO;
+import com.cursos_online.conteudo_service.dto.CursoDTO;
 import com.cursos_online.conteudo_service.entity.Conteudo;
 import com.cursos_online.conteudo_service.repository.ConteudoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
@@ -12,9 +14,11 @@ import java.util.List;
 public class ConteudoService {
 
     private final ConteudoRepository conteudoRepository;
+    private final WebClient webClient;
 
     public ConteudoService(ConteudoRepository conteudoRepository) {
         this.conteudoRepository = conteudoRepository;
+        this.webClient = WebClient.create("http://localhost:8081");
     }
 
     public List<Conteudo> listarTodos() {
@@ -27,6 +31,15 @@ public class ConteudoService {
     }
 
     public List<Conteudo> buscarPorCursoId(Long cursoId) {
+        CursoDTO cursoDTO = webClient.get()
+                .uri("/cursos/{id}", cursoId)
+                .retrieve()
+                .bodyToMono(CursoDTO.class)
+                .block();
+
+        if (cursoDTO == null) {
+            throw new RuntimeException("Curso não encontrado");
+        }
         return conteudoRepository.findByCursoId(cursoId);
     }
 

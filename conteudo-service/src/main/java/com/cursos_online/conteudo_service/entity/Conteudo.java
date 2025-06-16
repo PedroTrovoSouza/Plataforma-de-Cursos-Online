@@ -1,6 +1,5 @@
 package com.cursos_online.conteudo_service.entity;
 
-import com.cursos_online.conteudo_service.dto.CursoDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +23,9 @@ public class Conteudo {
 
     private Long cursoId;
 
-
-
+    public Conteudo(String titulo, String url_video, Long cursoId) {
+        this.titulo = titulo;
+        this.url_video = url_video;
+        this.cursoId = cursoId;
+    }
 }
