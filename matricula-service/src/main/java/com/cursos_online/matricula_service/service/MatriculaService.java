@@ -2,7 +2,8 @@ package com.cursos_online.matricula_service.service;
 
 import com.cursos_online.matricula_service.dto.AlunoDTO;
 import com.cursos_online.matricula_service.dto.MatriculaResponseDTO;
-import com.cursos_online.matricula_service.dto.MatriulaRequestDTO;
+import com.cursos_online.matricula_service.dto.MatriculaRequestDTO;
+import com.cursos_online.matricula_service.dto.UsuarioDTO;
 import com.cursos_online.matricula_service.entity.Matricula;
 import com.cursos_online.matricula_service.mapper.MapperMatricula;
 import com.cursos_online.matricula_service.repository.MatriculaRepository;
@@ -18,18 +19,18 @@ import java.util.stream.Collectors;
 
 @Service
 public class MatriculaService {
-    
-    @Autowired
-    MatriculaRepository matriculaRepository;
 
     @Autowired
-    MapperMatricula mapper;
+    private MatriculaRepository matriculaRepository;
+
+    @Autowired
+    private MapperMatricula mapper;
 
     private final WebClient webCurso;
     private final WebClient webUsuario;
 
     @Autowired
-    public MatriculaService(WebClient.Builder webClientBuilder){
+    public MatriculaService(WebClient.Builder webClientBuilder) {
         this.webCurso = webClientBuilder.baseUrl("http://localhost:8081").build();
         this.webUsuario = webClientBuilder.baseUrl("http://localhost:8082").build();
     }
@@ -42,9 +43,6 @@ public class MatriculaService {
 
             Long idCurso = webCurso.get()
                     .uri(uriBuilder -> uriBuilder
-                            .scheme("http")
-                            .host("localhost")
-                            .port(8081)
                             .path("/curso/nome")
                             .queryParam("nome", nomeCurso)
                             .build())
@@ -54,17 +52,13 @@ public class MatriculaService {
 
             Long idUsuario = webUsuario.get()
                     .uri(uriBuilder -> uriBuilder
-                            .scheme("http")
-                            .host("localhost")
-                            .port(8082)
-                            .path("/usuarios/email")
-                            .queryParam("email", emailUsuario)
-                            .build())
+                            .path("/usuarios/email/{email}")
+                            .build(emailUsuario))
                     .retrieve()
                     .bodyToMono(Long.class)
                     .block();
 
-            MatriulaRequestDTO dto = new MatriulaRequestDTO();
+            MatriculaRequestDTO dto = new MatriculaRequestDTO();
             dto.setIdCurso(idCurso);
             dto.setIdUsuario(idUsuario);
 
@@ -84,9 +78,8 @@ public class MatriculaService {
 
     public List<MatriculaResponseDTO> buscarMatricula() {
         List<Matricula> listaDeMatriculas = matriculaRepository.findAll();
-
-        if (listaDeMatriculas.isEmpty()){
-            throw new RuntimeException("Nenhuma matricula foi encotrada");
+        if (listaDeMatriculas.isEmpty()) {
+            throw new RuntimeException("Nenhuma matrícula foi encontrada");
         }
 
         return listaDeMatriculas.stream()
@@ -94,22 +87,32 @@ public class MatriculaService {
                 .collect(Collectors.toList());
     }
 
-    public List<AlunoDTO> buscarAlunosMatriculados(long idCurso) {
-        List<AlunoDTO> listaAluno = matriculaRepository.buscarAlunosPorCurso(idCurso);
-        if(listaAluno.isEmpty()){
-            throw new RuntimeException("Nenhum aluno matriculado nesse curso");
-        }
+    public List<UsuarioDTO> buscarUsuariosMatriculados(long idCurso) {
 
-        return listaAluno;
+        System.out.println("ID do curso recebido: " + idCurso);
+
+        List<UsuarioDTO> todosUsuarios = webUsuario.get()
+                .uri("/usuario/listarInterno")
+                .retrieve()
+                .bodyToFlux(UsuarioDTO.class)
+                .collectList()
+                .block();
+
+        List<Long> idsMatriculados = matriculaRepository.buscarIdsUsuariosPorCurso(idCurso);
+
+        System.out.println("IDS Matriculados: " + idsMatriculados);
+        System.out.println("Usuários disponíveis: " + todosUsuarios);
+
+        return todosUsuarios.stream()
+                .filter(usuario -> idsMatriculados.contains(usuario.getId()))
+                .collect(Collectors.toList());
     }
 
-    public void cancelarMatricula(long idMatricula){
+    public void cancelarMatricula(long idMatricula) {
         Optional<Matricula> matriculaEncontrada = matriculaRepository.findById(idMatricula);
-
-        if (matriculaEncontrada.isEmpty()){
-            throw new RuntimeException("Matricula não encontrada");
+        if (matriculaEncontrada.isEmpty()) {
+            throw new RuntimeException("Matrícula não encontrada");
         }
-
         matriculaRepository.delete(matriculaEncontrada.get());
     }
 }

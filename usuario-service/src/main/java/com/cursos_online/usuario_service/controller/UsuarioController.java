@@ -1,10 +1,15 @@
 package com.cursos_online.usuario_service.controller;
 
 import com.cursos_online.usuario_service.dto.UsuarioAtualizarDto;
+import com.cursos_online.usuario_service.dto.UsuarioDTO;
 import com.cursos_online.usuario_service.dto.UsuarioRequestDto;
 import com.cursos_online.usuario_service.dto.UsuarioResponseDto;
+import com.cursos_online.usuario_service.entity.Usuario;
+import com.cursos_online.usuario_service.repository.UsuarioRepository;
 import com.cursos_online.usuario_service.service.UsuarioService;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     private UsuarioService service;
+
+    @Autowired
+    private UsuarioRepository repository;
 
     public UsuarioController(UsuarioService service) {
         this.service = service;
@@ -77,4 +85,19 @@ public class UsuarioController {
         }
         return ResponseEntity.status(200).body("Usuário deletado com sucesso.");
     }
+
+    @GetMapping("listarInterno")
+    public ResponseEntity<List<UsuarioDTO>> listarUsuariosParaServicos() {
+        List<Usuario> usuarios = repository.findAll();
+        List<UsuarioDTO> dtos = usuarios.stream()
+                .map(usuario -> new UsuarioDTO(
+                        usuario.getId(),
+                        usuario.getNome(),
+                        usuario.getEmail(),
+                        usuario.getTipo()))
+                .toList();
+
+        return ResponseEntity.ok(dtos);
+    }
+
 }
