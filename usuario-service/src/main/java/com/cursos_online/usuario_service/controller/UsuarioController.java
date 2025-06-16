@@ -48,6 +48,16 @@ public class UsuarioController {
         return ResponseEntity.status(200).body(usuarioPorId);
     }
 
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UsuarioResponseDto> listarUsuarioPorEmail(@PathVariable String email) {
+        UsuarioResponseDto usuarioPorEmail = service.listarUsuarioPorEmail(email);
+
+        if (usuarioPorEmail == null) {
+            return ResponseEntity.status(404).build();
+        }
+        return ResponseEntity.status(200).body(usuarioPorEmail);
+    }
+
     @PutMapping
     public ResponseEntity<UsuarioResponseDto> atualizarUsuario(@RequestBody UsuarioAtualizarDto dto) {
         UsuarioResponseDto response = service.atualizarUsuario(dto);
@@ -67,10 +77,4 @@ public class UsuarioController {
         }
         return ResponseEntity.status(200).body("Usuário deletado com sucesso.");
     }
-
-    /*
-    Fazer metodo que conversa com o serviço do Trovo
-
-    @PostMapping
-    */
 }
