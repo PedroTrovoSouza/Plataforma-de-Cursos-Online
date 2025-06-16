@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -15,8 +15,8 @@ public class Matricula {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    Date data_matricula;
+    LocalDate dataMatricula;
     String status;
-    Long id_usuario;
-    Long id_curso;
+    Long idUsuario;
+    Long idCurso;
 }

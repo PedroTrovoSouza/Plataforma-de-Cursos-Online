@@ -5,7 +5,8 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class MatriculaResponse {
+public class MatriculaResponseDTO {
     Date data_matricula;
     String status;
+    String nomeCurso;
 }
