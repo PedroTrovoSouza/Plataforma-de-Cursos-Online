@@ -113,4 +113,12 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
         return true;
     }
+
+    public UsuarioResponseDto listarUsuarioPorEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmailEqualsIgnoreCase(email).orElse(null);
+        if (usuario == null) {
+            return null;
+        }
+        return UsuarioMapper.toResponseDto(usuario);
+    }
 }
