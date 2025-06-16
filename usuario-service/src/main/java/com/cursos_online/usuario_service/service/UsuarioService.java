@@ -1,18 +1,24 @@
 package com.cursos_online.usuario_service.service;
 
 import com.cursos_online.usuario_service.dto.UsuarioAtualizarDto;
+import com.cursos_online.usuario_service.dto.UsuarioEmailEventoDto;
 import com.cursos_online.usuario_service.dto.UsuarioRequestDto;
 import com.cursos_online.usuario_service.dto.UsuarioResponseDto;
 import com.cursos_online.usuario_service.entity.Usuario;
 import com.cursos_online.usuario_service.mapper.UsuarioMapper;
+import com.cursos_online.usuario_service.messaging.producer.UsuarioProducer;
 import com.cursos_online.usuario_service.repository.UsuarioRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UsuarioService {
+
+    @Autowired
+    private UsuarioProducer usuarioProducer;
 
     private UsuarioRepository usuarioRepository;
 
@@ -44,6 +50,10 @@ public class UsuarioService {
         }
 
         usuarioRepository.save(usuario);
+
+        UsuarioEmailEventoDto eventoDto = new UsuarioEmailEventoDto(usuario.getNome(), usuario.getEmail());
+        usuarioProducer.enviarEventoUsuarioCriado(eventoDto);
+
         UsuarioResponseDto responseDto = UsuarioMapper.toResponseDto(usuario);
         return responseDto;
     }
