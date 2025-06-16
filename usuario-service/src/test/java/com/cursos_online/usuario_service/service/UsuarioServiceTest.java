@@ -171,4 +171,40 @@ class UsuarioServiceTest {
         assertFalse(result);
         verify(usuarioRepository, never()).deleteById(anyLong());
     }
+
+    //listarUsuarioPorEmail - positivo
+    @Test
+    void deveRetornarUsuarioQuandoEmailExistir() {
+        // Arrange
+        String email = "joao@email.com";
+        Usuario usuario = new Usuario(1L, "João", email, "senha123", "ALUNO");
+
+        when(usuarioRepository.findByEmailEqualsIgnoreCase(email)).thenReturn(Optional.of(usuario));
+
+        // Act
+        UsuarioResponseDto resultado = usuarioService.listarUsuarioPorEmail(email);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals("João", resultado.getNome());
+        assertEquals(email, resultado.getEmail());
+        verify(usuarioRepository).findByEmailEqualsIgnoreCase(email);
+    }
+
+    //listarUsuarioPorEmail - negativo
+    @Test
+    void deveRetornarNullQuandoEmailNaoExistir() {
+        // Arrange
+        String email = "naoexiste@email.com";
+
+        when(usuarioRepository.findByEmailEqualsIgnoreCase(email)).thenReturn(Optional.empty());
+
+        // Act
+        UsuarioResponseDto resultado = usuarioService.listarUsuarioPorEmail(email);
+
+        // Assert
+        assertNull(resultado);
+        verify(usuarioRepository).findByEmailEqualsIgnoreCase(email);
+    }
+
 }

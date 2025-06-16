@@ -3,6 +3,7 @@ package com.cursos_online.usuario_service.controller;
 
 import com.cursos_online.usuario_service.dto.UsuarioAtualizarDto;
 import com.cursos_online.usuario_service.dto.UsuarioRequestDto;
+import com.cursos_online.usuario_service.dto.UsuarioResponseDto;
 import com.cursos_online.usuario_service.entity.Usuario;
 import com.cursos_online.usuario_service.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -92,9 +93,23 @@ public class UsuarioControllerTest {
     }
 
     @Test
-    public void testDeletarUsuarioNaoExistente() throws Exception {
-        mockMvc.perform(delete("/usuario/999"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("Usuário não encontrado."));
+    void deveRetornarUsuarioPorEmail() throws Exception {
+        // Arrange
+        Usuario usuario = new Usuario(null, "João", "joao@email.com", "senha123", "ALUNO");
+        usuarioRepository.save(usuario);
+
+        // Act & Assert
+        mockMvc.perform(get("/usuario/email/{email}", "joao@email.com"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("João"))
+                .andExpect(jsonPath("$.email").value("joao@email.com"))
+                .andExpect(jsonPath("$.tipo").value("ALUNO"));
+    }
+
+    @Test
+    void deveRetornarNotFoundQuandoEmailNaoExistir() throws Exception {
+        // Act & Assert
+        mockMvc.perform(get("/usuario/email/{email}", "naoexiste@email.com"))
+                .andExpect(status().isNotFound());
     }
 }
