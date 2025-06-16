@@ -82,7 +82,6 @@ public class MatriculaService {
         }
     }
 
-
     public List<MatriculaResponseDTO> buscarMatricula() {
         List<Matricula> listaDeMatriculas = matriculaRepository.findAll();
 
