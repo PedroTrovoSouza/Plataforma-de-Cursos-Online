@@ -41,15 +41,14 @@ public class AvaliacaoService {
                 .block();
         List<Avaliacao> avaliacoes = avaliacaoRepository.findAllByIdUsuario(idUsuario);
 
-        return avaliacoes.stream().map(avaliacao ->
-                AvaliacaoMapper.toResponse(avaliacao, avaliacao.getCurso().getTitulo())).toList();
+        return avaliacoes.stream().map(AvaliacaoMapper::toResponse).toList();
     }
 
     public List<Avaliacao> listarAvaliacaoDoCurso(Long idCurso){
         return avaliacaoRepository.findAllByCursoId(idCurso);
     }
 
-    public AvaliacaoCadastroDto avaliarCurso(Avaliacao avaliacao, Long idCurso){
+    public Avaliacao avaliarCurso(Avaliacao avaliacao, Long idCurso){
         String urlUsuarios = "/usuario/" + avaliacao.getIdUsuario();
         UsuarioResponseDto user = webUsuario.get()
                 .uri(urlUsuarios)
@@ -60,8 +59,7 @@ public class AvaliacaoService {
         Curso curso = cursoService.buscarCursoPorId(idCurso);
         avaliacao.setCurso(curso);
 
-        Avaliacao avaliacaoCadastrada = avaliacaoRepository.save(avaliacao);
-        return AvaliacaoMapper.toResponse(avaliacaoCadastrada, curso.getTitulo());
+        return avaliacaoRepository.save(avaliacao);
     }
 
     public Avaliacao buscarAvaliacaoPorId(Long id){

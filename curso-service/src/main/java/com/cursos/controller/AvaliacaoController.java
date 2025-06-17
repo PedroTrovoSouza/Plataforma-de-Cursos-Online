@@ -40,7 +40,8 @@ public class AvaliacaoController {
     @PostMapping("/{id}")
     public ResponseEntity<AvaliacaoCadastroDto> avaliar(@RequestBody AvaliacaoRequestDto avaliacaoCadastro){
         Avaliacao avaliacao = AvaliacaoMapper.toEntity(avaliacaoCadastro);
-        AvaliacaoCadastroDto response = avaliacaoService.avaliarCurso(avaliacao, avaliacaoCadastro.idCurso());
+        Avaliacao avaliacaoCadastrada = avaliacaoService.avaliarCurso(avaliacao, avaliacaoCadastro.idCurso());
+        AvaliacaoCadastroDto response = AvaliacaoMapper.toResponse(avaliacaoCadastrada);
         return ResponseEntity.status(201).body(response);
     }
 }

@@ -6,9 +6,9 @@ import com.cursos.entity.Avaliacao;
 
 public class AvaliacaoMapper {
 
-    public static AvaliacaoCadastroDto toResponse (Avaliacao avaliacao, String nomeCurso) {
-        return new AvaliacaoCadastroDto(avaliacao.getId(), avaliacao.getNota(), avaliacao.getComentario(),
-                avaliacao.getNomeUsuario(), nomeCurso);
+    public static AvaliacaoCadastroDto toResponse (Avaliacao avaliacao) {
+        return new AvaliacaoCadastroDto(avaliacao.getId(), avaliacao.getComentario(),
+                avaliacao.getNomeUsuario(), avaliacao.getCurso().getTitulo());
     }
 
     public static Avaliacao toEntity(AvaliacaoRequestDto avaliacaoCadastro) {

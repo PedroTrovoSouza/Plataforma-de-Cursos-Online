@@ -35,30 +35,30 @@ public class CursoService {
         if(cursoRepository.existsByTitulo(novoTItulo)){
             throw new CursoConflitoException("Curso com Titulo identico ja cadastrado!");
         }
-        Curso cursoAtualizado = cursoRepository.save(buscarCursoPorId(id));
-        cursoAtualizado.setTitulo(novoTItulo);
-        return cursoAtualizado;
+        Curso cursoParaAtualizar = buscarCursoPorId(id);
+        cursoParaAtualizar.setTitulo(novoTItulo);
+        return cursoRepository.save(cursoParaAtualizar);
     }
 
     public Curso atualizarDescricaoDoCurso(Long id, String novaDescricao){
         if(cursoRepository.existsByDescricao(novaDescricao)){
             throw new CursoConflitoException("Curso com Descrição identico ja cadastrado!");
         }
-        Curso cursoAtualizado = cursoRepository.save(buscarCursoPorId(id));
-        cursoAtualizado.setDescricao(novaDescricao);
-        return cursoAtualizado;
+        Curso cursoParaAtualizar = buscarCursoPorId(id);
+        cursoParaAtualizar.setDescricao(novaDescricao);
+        return cursoRepository.save(cursoParaAtualizar);
     }
 
     public Curso atualizarCategoria(Long id, String novaCategoria){
-        Curso cursoAtualizado = cursoRepository.save(buscarCursoPorId(id));
-        cursoAtualizado.setCategoria(novaCategoria);
-        return cursoAtualizado;
+        Curso cursoParaAtualizar = buscarCursoPorId(id);
+        cursoParaAtualizar.setCategoria(novaCategoria);
+        return cursoRepository.save(cursoParaAtualizar);
     }
 
     public Curso atualizarPreco(Long id, Double novoPreco){
-        Curso cursoAtualizado = cursoRepository.save(buscarCursoPorId(id));
-        cursoAtualizado.setPreco(novoPreco);
-        return cursoAtualizado;
+        Curso cursoParaAtualizar = buscarCursoPorId(id);
+        cursoParaAtualizar.setPreco(novoPreco);
+        return cursoRepository.save(cursoParaAtualizar);
     }
 
     public void deletarCursoPorId(Long id){
