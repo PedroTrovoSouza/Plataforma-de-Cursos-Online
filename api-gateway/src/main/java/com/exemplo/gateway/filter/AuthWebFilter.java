@@ -1,5 +1,8 @@
 package com.exemplo.gateway.filter;
 
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +22,9 @@ public class AuthWebFilter implements WebFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthWebFilter.class);
 
-    private final   Key secretKey;
+    private final Key secretKey;
 
-    public AuthWebFilter(@Value("${jwt.secret}") String secretKeyBase64) {
+    public AuthWebFilter(@Value("${api.security.token.secret}") String secretKeyBase64) {
         try {
             this.secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKeyBase64));
         } catch (Exception e) {
