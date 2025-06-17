@@ -3,6 +3,7 @@ import com.cursos.dto.usuario.UsuarioResponseDto;
 import com.cursos.entity.Avaliacao;
 import com.cursos.entity.Curso;
 import com.cursos.exception.AvaliacaoNaoEncontradaException;
+import com.cursos.exception.NotaDeAvaliacaoInvalida;
 import com.cursos.repository.AvaliacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,9 @@ public class AvaliacaoService {
     }
 
     public Avaliacao avaliarCurso(Avaliacao avaliacao, Long idCurso){
+        if (avaliacao.getNota() < 0 || avaliacao.getNota() > 10){
+         throw new NotaDeAvaliacaoInvalida("A nota da avaliação deve estar entre 0 e 10.");
+        }
         String urlUsuarios = "/usuario/" + avaliacao.getIdUsuario();
         UsuarioResponseDto user = webUsuario.get()
                 .uri(urlUsuarios)

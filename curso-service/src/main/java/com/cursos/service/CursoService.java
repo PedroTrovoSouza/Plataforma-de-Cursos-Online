@@ -21,7 +21,8 @@ public class CursoService {
     }
 
     public Curso cadastrarNovoCurso(Curso cursoParaCadastrar){
-        if (cursoRepository.existsByTituloOrDescricaoAllContainsIgnoreCase(cursoParaCadastrar.getTitulo(), cursoParaCadastrar.getDescricao())){
+        if (cursoRepository.existsByTituloContainingIgnoreCaseOrDescricaoContainingIgnoreCase
+                (cursoParaCadastrar.getTitulo(), cursoParaCadastrar.getDescricao())){
             throw new CursoConflitoException("Curso com Titulo ou Descrição ja cadastrado!");
         }
         cursoParaCadastrar.setNota(0.0);

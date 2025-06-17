@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface CursoRepository extends JpaRepository<Curso, Long> {
 
-    boolean existsByTituloOrDescricaoAllContainsIgnoreCase(String titulo, String descricao);
+    boolean existsByTituloContainingIgnoreCaseOrDescricaoContainingIgnoreCase(String titulo, String descricao);
 
     boolean existsByTitulo(String titulo);
 

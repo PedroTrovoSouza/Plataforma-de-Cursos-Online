@@ -18,13 +18,6 @@ public class CursoController {
 
     private final CursoService cursoService;
 
-    @GetMapping
-    public ResponseEntity<List<CursoCadastroDto>> listarCursosCadastrados(){
-        List<Curso> cursos = cursoService.listarTodosCursos();
-        List<CursoCadastroDto> response = cursos.stream().map(CursoMapper::toResponseDto).toList();
-        return response.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
-    }
-
     @PostMapping
     public ResponseEntity<CursoCadastroDto> cadastrarNovoCurso(@RequestBody CursoRequestDto cursoParaCadastrar){
         Curso curso = CursoMapper.toEntity(cursoParaCadastrar);
@@ -33,17 +26,24 @@ public class CursoController {
                         .cadastrarNovoCurso(curso)));
     }
 
+    @GetMapping
+    public ResponseEntity<List<CursoCadastroDto>> listarTodosOsCursos(){
+        List<Curso> cursos = cursoService.listarTodosCursos();
+        List<CursoCadastroDto> response = cursos.stream().map(CursoMapper::toResponseDto).toList();
+        return response.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/categoria/{categoria}")
+    public ResponseEntity<List<CursoCadastroDto>> listarPorCategoria(@PathVariable String categoria){
+        List<Curso> cursos = cursoService.listarPorCategoria(categoria);
+        List<CursoCadastroDto> response = cursos.stream().map(CursoMapper::toResponseDto).toList();
+        return response.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
+    }
+
     @GetMapping("/id/{id}")
     public ResponseEntity<CursoCadastroDto> buscarCursoPorId(@PathVariable Long id){
         Curso curso = cursoService.buscarCursoPorId(id);
         CursoCadastroDto response = CursoMapper.toResponseDto(curso);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<CursoCadastroDto>> listarPorCategoria(@PathVariable String categoria){
-        List<Curso> cursos = cursoService.listarPorCategoria(categoria);
-        List<CursoCadastroDto> response = cursos.stream().map(CursoMapper::toResponseDto).toList();
         return ResponseEntity.ok(response);
     }
 
