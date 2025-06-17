@@ -3,7 +3,9 @@ package com.cursos_online.matricula_service.controller;
 import com.cursos_online.matricula_service.dto.AlunoDTO;
 import com.cursos_online.matricula_service.dto.MatriculaResponseDTO;
 import com.cursos_online.matricula_service.dto.UsuarioDTO;
+import com.cursos_online.matricula_service.entity.Matricula;
 import com.cursos_online.matricula_service.service.MatriculaService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +46,16 @@ public class MatriculaController {
             return ResponseEntity.ok().body(alunosEncontrados);
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/buscar-dados-matricula/{id}")
+    public ResponseEntity<?> buscarDadosMatricula(@PathVariable long id){
+        try {
+            Matricula matriculaEncontrada = matriculaService.buscarDadosMatricula(id);
+            return ResponseEntity.ok().body(matriculaEncontrada);
+        }catch (RuntimeException e){
+            return ResponseEntity.status(404).body(e.getMessage());
         }
     }
 

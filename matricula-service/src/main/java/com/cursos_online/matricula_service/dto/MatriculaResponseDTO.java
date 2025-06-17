@@ -2,11 +2,12 @@ package com.cursos_online.matricula_service.dto;
 
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
 public class MatriculaResponseDTO {
-    Date data_matricula;
+    LocalDate data_matricula;
     String status;
     String nomeCurso;
 }
