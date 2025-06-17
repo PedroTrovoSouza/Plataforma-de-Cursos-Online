@@ -1,9 +1,6 @@
 package com.cursos_online.usuario_service.service;
 
-import com.cursos_online.usuario_service.dto.UsuarioAtualizarDto;
-import com.cursos_online.usuario_service.dto.UsuarioEmailEventoDto;
-import com.cursos_online.usuario_service.dto.UsuarioRequestDto;
-import com.cursos_online.usuario_service.dto.UsuarioResponseDto;
+import com.cursos_online.usuario_service.dto.*;
 import com.cursos_online.usuario_service.entity.Usuario;
 import com.cursos_online.usuario_service.mapper.UsuarioMapper;
 import com.cursos_online.usuario_service.messaging.producer.UsuarioProducer;
@@ -114,11 +111,11 @@ public class UsuarioService {
         return true;
     }
 
-    public UsuarioResponseDto listarUsuarioPorEmail(String email) {
+    public UsuarioDTO listarUsuarioPorEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmailEqualsIgnoreCase(email).orElse(null);
         if (usuario == null) {
             return null;
         }
-        return UsuarioMapper.toResponseDto(usuario);
+        return UsuarioMapper.toResponseDtoMatricula(usuario);
     }
 }

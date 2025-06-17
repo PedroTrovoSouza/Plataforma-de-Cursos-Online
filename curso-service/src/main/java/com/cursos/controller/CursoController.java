@@ -2,6 +2,7 @@ package com.cursos.controller;
 
 import com.cursos.dto.curso.CursoRequestDto;
 import com.cursos.dto.curso.CursoResponseDto;
+import com.cursos.dto.curso.CursoResponseMatricula;
 import com.cursos.entity.Curso;
 import com.cursos.mapper.CursoMapper;
 import com.cursos.service.CursoService;
@@ -40,10 +41,10 @@ public class CursoController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{nome}")
-    public ResponseEntity<CursoResponseDto> buscarCursoPorNome(@PathVariable String nome){
+    @GetMapping("/buscar-por-nome/{nome}")
+    public ResponseEntity<CursoResponseMatricula> buscarCursoPorNome(@PathVariable String nome) {
         Curso curso = cursoService.buscarCursoPorNome(nome);
-        CursoResponseDto response = CursoMapper.toResponseDto(curso);
+        CursoResponseMatricula response = CursoMapper.toMatriculaDto(curso); // <- Aqui
         return ResponseEntity.ok(response);
     }
 

@@ -1,5 +1,6 @@
 package com.cursos_online.usuario_service.mapper;
 
+import com.cursos_online.usuario_service.dto.UsuarioDTO;
 import com.cursos_online.usuario_service.dto.UsuarioRequestDto;
 import com.cursos_online.usuario_service.dto.UsuarioResponseDto;
 import com.cursos_online.usuario_service.dto.UsuarioAtualizarDto;
@@ -19,6 +20,18 @@ public class UsuarioMapper {
         usuario.setTipo(dto.getTipo());
 
         return usuario;
+    }
+
+    public static UsuarioDTO toResponseDtoMatricula(Usuario usuario) {
+        if (usuario == null) return null;
+
+        UsuarioDTO dto = new UsuarioDTO();
+        dto.setId(usuario.getId());
+        dto.setNome(usuario.getNome());
+        dto.setEmail(usuario.getEmail());
+        dto.setTipo(usuario.getTipo());
+
+        return dto;
     }
 
     public static Usuario toEntity(UsuarioAtualizarDto dto) {
@@ -44,4 +57,6 @@ public class UsuarioMapper {
 
         return dto;
     }
+
+
 }

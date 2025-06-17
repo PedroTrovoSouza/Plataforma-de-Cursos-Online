@@ -57,8 +57,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<UsuarioResponseDto> listarUsuarioPorEmail(@PathVariable String email) {
-        UsuarioResponseDto usuarioPorEmail = service.listarUsuarioPorEmail(email);
+    public ResponseEntity<UsuarioDTO> listarUsuarioPorEmail(@PathVariable String email) {
+        UsuarioDTO usuarioPorEmail = service.listarUsuarioPorEmail(email);
 
         if (usuarioPorEmail == null) {
             return ResponseEntity.status(404).build();

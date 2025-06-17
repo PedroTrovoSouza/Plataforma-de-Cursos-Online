@@ -1,5 +1,7 @@
 package com.cursos_online.matricula_service.service;
 
+import com.cursos.dto.curso.CursoResponseDto;
+import com.cursos.dto.curso.CursoResponseMatricula;
 import com.cursos_online.matricula_service.dto.AlunoDTO;
 import com.cursos_online.matricula_service.dto.MatriculaResponseDTO;
 import com.cursos_online.matricula_service.dto.MatriculaRequestDTO;
@@ -11,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -41,33 +45,36 @@ public class MatriculaService {
                 throw new RuntimeException("Curso não pode estar em branco!");
             }
 
-            Long idCurso = webCurso.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/curso/nome")
-                            .queryParam("nome", nomeCurso)
-                            .build())
+            CursoResponseMatricula cursoResponse = webCurso.get()
+                    .uri("/cursos/buscar-por-nome/{nome}", nomeCurso)
                     .retrieve()
-                    .bodyToMono(Long.class)
+                    .bodyToMono(CursoResponseMatricula.class)
                     .block();
 
-            Long idUsuario = webUsuario.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/usuarios/email/{email}")
-                            .build(emailUsuario))
+            Long idCurso = cursoResponse.getId();
+
+            String emailEncoded = UriUtils.encodePathSegment(emailUsuario, StandardCharsets.UTF_8);
+
+            UsuarioDTO usuarioResponse = webUsuario.get()
+                    .uri("/usuario/email/{email}", emailUsuario)
                     .retrieve()
-                    .bodyToMono(Long.class)
+                    .bodyToMono(UsuarioDTO.class)
                     .block();
 
             MatriculaRequestDTO dto = new MatriculaRequestDTO();
             dto.setIdCurso(idCurso);
-            dto.setIdUsuario(idUsuario);
+            dto.setIdUsuario(usuarioResponse.getId());
 
             Matricula novaMatricula = mapper.toEntity(dto);
             novaMatricula.setDataMatricula(LocalDate.now());
             novaMatricula.setStatus("ATIVA");
 
             Matricula salva = matriculaRepository.save(novaMatricula);
-            return mapper.toMatriculaResponse(salva);
+
+            MatriculaResponseDTO response = mapper.toMatriculaResponse(salva);
+            response.setNomeCurso(cursoResponse.getTitulo());
+            response.setData_matricula(LocalDate.now());
+            return response;
 
         } catch (WebClientResponseException.NotFound e) {
             throw new RuntimeException("Curso ou usuário não encontrado.");
