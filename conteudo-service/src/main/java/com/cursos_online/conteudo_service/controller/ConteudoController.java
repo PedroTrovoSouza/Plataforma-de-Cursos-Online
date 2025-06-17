@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/conteudo")
+@RequestMapping("/conteudos")
 public class ConteudoController {
 
     private final ConteudoService conteudoService;
