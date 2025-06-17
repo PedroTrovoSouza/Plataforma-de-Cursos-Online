@@ -1,7 +1,7 @@
 package com.cursos.controller;
 
 import com.cursos.dto.curso.CursoRequestDto;
-import com.cursos.dto.curso.CursoCadastroDto;
+import com.cursos.dto.curso.CursoResponseDto;
 import com.cursos.entity.Curso;
 import com.cursos.mapper.CursoMapper;
 import com.cursos.service.CursoService;
@@ -19,7 +19,7 @@ public class CursoController {
     private final CursoService cursoService;
 
     @PostMapping
-    public ResponseEntity<CursoCadastroDto> cadastrarNovoCurso(@RequestBody CursoRequestDto cursoParaCadastrar){
+    public ResponseEntity<CursoResponseDto> cadastrarNovoCurso(@RequestBody CursoRequestDto cursoParaCadastrar){
         Curso curso = CursoMapper.toEntity(cursoParaCadastrar);
         return ResponseEntity.status(201).body(CursoMapper
                 .toResponseDto(cursoService
@@ -27,49 +27,49 @@ public class CursoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CursoCadastroDto>> listarTodosOsCursos(){
+    public ResponseEntity<List<CursoResponseDto>> listarTodosOsCursos(){
         List<Curso> cursos = cursoService.listarTodosCursos();
-        List<CursoCadastroDto> response = cursos.stream().map(CursoMapper::toResponseDto).toList();
+        List<CursoResponseDto> response = cursos.stream().map(CursoMapper::toResponseDto).toList();
         return response.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
     }
 
     @GetMapping("/categoria/{categoria}")
-    public ResponseEntity<List<CursoCadastroDto>> listarPorCategoria(@PathVariable String categoria){
+    public ResponseEntity<List<CursoResponseDto>> listarPorCategoria(@PathVariable String categoria){
         List<Curso> cursos = cursoService.listarPorCategoria(categoria);
-        List<CursoCadastroDto> response = cursos.stream().map(CursoMapper::toResponseDto).toList();
+        List<CursoResponseDto> response = cursos.stream().map(CursoMapper::toResponseDto).toList();
         return response.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<CursoCadastroDto> buscarCursoPorId(@PathVariable Long id){
+    public ResponseEntity<CursoResponseDto> buscarCursoPorId(@PathVariable Long id){
         Curso curso = cursoService.buscarCursoPorId(id);
-        CursoCadastroDto response = CursoMapper.toResponseDto(curso);
+        CursoResponseDto response = CursoMapper.toResponseDto(curso);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/titulo/{id}")
-    public ResponseEntity<CursoCadastroDto> atualizarTitulo(@PathVariable Long id, @RequestBody String novoTitulo){
+    public ResponseEntity<CursoResponseDto> atualizarTitulo(@PathVariable Long id, @RequestBody String novoTitulo){
         Curso curso = cursoService.atualizarTituloDoCurso(id, novoTitulo);
         return ResponseEntity.ok(
                 CursoMapper.toResponseDto(curso));
     }
 
     @PatchMapping("/descricao/{id}")
-    public ResponseEntity<CursoCadastroDto> atualizarDescricao(@PathVariable Long id, @RequestBody String novaDescricao){
+    public ResponseEntity<CursoResponseDto> atualizarDescricao(@PathVariable Long id, @RequestBody String novaDescricao){
         Curso curso = cursoService.atualizarDescricaoDoCurso(id, novaDescricao);
         return ResponseEntity.ok(
                 CursoMapper.toResponseDto(curso));
     }
 
     @PatchMapping("/categoria/{id}")
-    public ResponseEntity<CursoCadastroDto> atualizarCategoria(@PathVariable Long id, @RequestBody String novaCategoria){
+    public ResponseEntity<CursoResponseDto> atualizarCategoria(@PathVariable Long id, @RequestBody String novaCategoria){
         Curso curso = cursoService.atualizarCategoria(id, novaCategoria);
         return ResponseEntity.ok(
                 CursoMapper.toResponseDto(curso));
     }
 
     @PatchMapping("/preco/{id}")
-    public ResponseEntity<CursoCadastroDto> atualizarPreco(@PathVariable Long id, @RequestBody Double novoPreco){
+    public ResponseEntity<CursoResponseDto> atualizarPreco(@PathVariable Long id, @RequestBody Double novoPreco){
         Curso curso = cursoService.atualizarPreco(id, novoPreco);
         return ResponseEntity.ok(
                 CursoMapper.toResponseDto(curso));
