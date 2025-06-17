@@ -1,5 +1,6 @@
 package com.cursos.service;
 
+import com.cursos.entity.Avaliacao;
 import com.cursos.entity.Curso;
 import com.cursos.exception.CursoConflitoException;
 import com.cursos.exception.CursoNaoEncontradoException;
@@ -20,9 +21,10 @@ public class CursoService {
     }
 
     public Curso cadastrarNovoCurso(Curso cursoParaCadastrar){
-        if (cursoRepository.existsByTituloOrDescricaoAllIgnoreCase(cursoParaCadastrar.getTitulo(), cursoParaCadastrar.getDescricao())){
+        if (cursoRepository.existsByTituloOrDescricaoAllContainsIgnoreCase(cursoParaCadastrar.getTitulo(), cursoParaCadastrar.getDescricao())){
             throw new CursoConflitoException("Curso com Titulo ou Descrição ja cadastrado!");
         }
+        cursoParaCadastrar.setNota(0.0);
         return cursoRepository.save(cursoParaCadastrar);
     }
 
@@ -66,14 +68,13 @@ public class CursoService {
         cursoRepository.delete(cursoParaDeletar);
     }
 
-    public void deletarCursoPorTitulo(String titulo){
-        Curso cursoParaDeletar = cursoRepository.findByTitulo(titulo)
-                .orElseThrow(() -> new CursoNaoEncontradoException("Curso com Título não encontrado."));
-        cursoRepository.delete(cursoParaDeletar);
+    public List<Curso> listarPorCategoria(String categoria) {
+        return cursoRepository.findAllByCategoriaContaining(categoria);
     }
 
-    public Curso buscarCursoPorNome(String nome) {
-        return cursoRepository.findByTitulo(nome)
-                .orElseThrow(() -> new CursoNaoEncontradoException("Curso com ID não encontrado!"));
+    public void atualizarNotaDoCurso(Long idCurso, List<Avaliacao> avaliacoes) {
+        Curso curso = buscarCursoPorId(idCurso);
+        curso.atualizarNota(avaliacoes);
+        cursoRepository.save(curso);
     }
 }

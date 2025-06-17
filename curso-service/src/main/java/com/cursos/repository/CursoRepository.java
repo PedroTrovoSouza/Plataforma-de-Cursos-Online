@@ -4,16 +4,17 @@ import com.cursos.entity.Curso;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface CursoRepository extends JpaRepository<Curso, Long> {
 
-    boolean existsByTituloOrDescricaoAllIgnoreCase(String titulo, String descricao);
+    boolean existsByTituloOrDescricaoAllContainsIgnoreCase(String titulo, String descricao);
 
     boolean existsByTitulo(String titulo);
 
     boolean existsByDescricao(String descricao);
 
-    Optional<Curso> findByTitulo(String titulo);
+    List<Curso> findAllByCategoriaContaining(String categoria);
 }
