@@ -47,7 +47,7 @@ public class AvaliacaoService {
 
     public Avaliacao avaliarCurso(Avaliacao avaliacao, Long idCurso){
         if (avaliacao.getNota() < 0 || avaliacao.getNota() > 10){
-         throw new NotaDeAvaliacaoInvalida("A nota da avaliação deve estar entre 0 e 10.");
+            throw new NotaDeAvaliacaoInvalida("A nota da avaliação deve estar entre 0 e 10.");
         }
         String urlUsuarios = "/usuario/" + avaliacao.getIdUsuario();
         UsuarioResponseDto user = webUsuario.get()
