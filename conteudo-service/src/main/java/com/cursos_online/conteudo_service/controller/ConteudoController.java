@@ -25,7 +25,7 @@ public class ConteudoController {
     public ResponseEntity<List<ListarConteudoDTO>> buscarPorCurso(@PathVariable Long cursoId) {
         List<ListarConteudoDTO> conteudos = conteudoService.buscarPorCursoId(cursoId)
                 .stream()
-                .map(conteudo -> new ListarConteudoDTO(conteudo.getId(), conteudo.getTitulo(), conteudo.getUrl_video()))
+                .map(conteudo -> new ListarConteudoDTO(conteudo.getId(), conteudo.getTitulo(), conteudo.getUrl_video(), conteudo.getCursoId()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(conteudos);
@@ -34,19 +34,19 @@ public class ConteudoController {
     @GetMapping("/{id}")
     public ResponseEntity<ListarConteudoDTO> buscarPorId(@PathVariable Long id) {
         Conteudo conteudo = conteudoService.buscarPorId(id);
-        return ResponseEntity.ok(new ListarConteudoDTO(conteudo.getId(), conteudo.getTitulo(), conteudo.getUrl_video()));
+        return ResponseEntity.ok(new ListarConteudoDTO(conteudo.getId(), conteudo.getTitulo(), conteudo.getUrl_video(), conteudo.getCursoId()));
     }
 
     @PostMapping
     public ResponseEntity<ListarConteudoDTO> salvar(@RequestBody CadastrarConteudoDTO dto) {
         Conteudo novoConteudo = conteudoService.salvar(dto);
-        return ResponseEntity.status(201).body(new ListarConteudoDTO(novoConteudo.getId(), novoConteudo.getTitulo(), novoConteudo.getUrl_video()));
+        return ResponseEntity.status(201).body(new ListarConteudoDTO(novoConteudo.getId(), novoConteudo.getTitulo(), novoConteudo.getUrl_video(), novoConteudo.getCursoId()));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ListarConteudoDTO> atualizar(@PathVariable Long id, @RequestBody AtualizarConteudoDTO dto) {
         Conteudo conteudoAtualizado = conteudoService.atualizar(id, dto);
-        return ResponseEntity.ok(new ListarConteudoDTO(conteudoAtualizado.getId(), conteudoAtualizado.getTitulo(), conteudoAtualizado.getUrl_video()));
+        return ResponseEntity.ok(new ListarConteudoDTO(conteudoAtualizado.getId(), conteudoAtualizado.getTitulo(), conteudoAtualizado.getUrl_video(), conteudoAtualizado.getCursoId()));
     }
 
     @DeleteMapping("/{id}")

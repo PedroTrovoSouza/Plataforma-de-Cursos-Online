@@ -32,7 +32,7 @@ public class ConteudoService {
 
     public List<Conteudo> buscarPorCursoId(Long cursoId) {
         CursoDTO cursoDTO = webClient.get()
-                .uri("/cursos/{id}", cursoId)
+                .uri("/cursos/id/{id}", cursoId)
                 .retrieve()
                 .bodyToMono(CursoDTO.class)
                 .block();
@@ -44,9 +44,12 @@ public class ConteudoService {
     }
 
     public Conteudo salvar(CadastrarConteudoDTO dto) {
+
         Conteudo conteudo = new Conteudo();
         conteudo.setTitulo(dto.titulo());
         conteudo.setUrl_video(dto.url_video());
+        conteudo.setCursoId(dto.cursoId());
+
         return conteudoRepository.save(conteudo);
     }
 
