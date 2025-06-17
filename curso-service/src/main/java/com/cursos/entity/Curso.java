@@ -39,4 +39,12 @@ public class Curso {
         this.categoria = categoria;
         this.preco = preco;
     }
+
+
+    public void atualizarNota(List<Avaliacao> avaliacoes) {
+        this.nota = avaliacoes.stream()
+                .mapToDouble(Avaliacao::getNota)
+                .average()
+                .orElse(0.0);
+    }
 }

@@ -1,10 +1,9 @@
 package com.cursos.service;
-import com.cursos.dto.avaliacao.AvaliacaoResponseDto;
 import com.cursos.dto.usuario.UsuarioResponseDto;
 import com.cursos.entity.Avaliacao;
 import com.cursos.entity.Curso;
 import com.cursos.exception.AvaliacaoNaoEncontradaException;
-import com.cursos.mapper.AvaliacaoMapper;
+import com.cursos.exception.NotaDeAvaliacaoInvalida;
 import com.cursos.repository.AvaliacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,42 +24,50 @@ public class AvaliacaoService {
     public AvaliacaoService(AvaliacaoRepository avaliacaoRepository, CursoService cursoService, WebClient.Builder webClientBuilder) {
         this.avaliacaoRepository = avaliacaoRepository;
         this.cursoService = cursoService;
-        this.webUsuario = webClientBuilder.baseUrl("http://localhost:9091").build();
+        this.webUsuario = webClientBuilder.baseUrl("http://localhost:8082").build();
     }
 
     public List<Avaliacao> listarTodasAvaliacao(){
         return avaliacaoRepository.findAll();
     }
 
-    public List<AvaliacaoResponseDto> listarAvaliacaoDoUsuario(Long idUsuario){
+    public List<Avaliacao> listarAvaliacaoDoUsuario(Long idUsuario){
         String urlUsuarios = "/usuario/" + idUsuario;
         UsuarioResponseDto user = webUsuario.get()
                 .uri(urlUsuarios)
                 .retrieve()
                 .bodyToMono(UsuarioResponseDto.class)
                 .block();
-        List<Avaliacao> avaliacoes = avaliacaoRepository.findAllByIdUsuario(idUsuario);
-
-        return avaliacoes.stream().map(avaliacao ->
-                AvaliacaoMapper.toResponse(avaliacao, user.getNome(), avaliacao.getCurso().getTitulo())).toList();
+        return avaliacaoRepository.findAllByIdUsuario(idUsuario);
     }
 
     public List<Avaliacao> listarAvaliacaoDoCurso(Long idCurso){
         return avaliacaoRepository.findAllByCursoId(idCurso);
     }
 
-    public AvaliacaoResponseDto avaliarCurso(Avaliacao avaliacao, Long idCurso){
+    public Avaliacao avaliarCurso(Avaliacao avaliacao, Long idCurso){
+        if (avaliacao.getNota() < 0 || avaliacao.getNota() > 10){
+         throw new NotaDeAvaliacaoInvalida("A nota da avaliação deve estar entre 0 e 10.");
+        }
         String urlUsuarios = "/usuario/" + avaliacao.getIdUsuario();
         UsuarioResponseDto user = webUsuario.get()
                 .uri(urlUsuarios)
                 .retrieve()
                 .bodyToMono(UsuarioResponseDto.class)
                 .block();
+        avaliacao.setNomeUsuario(user.getNome());
         Curso curso = cursoService.buscarCursoPorId(idCurso);
         avaliacao.setCurso(curso);
-
         Avaliacao avaliacaoCadastrada = avaliacaoRepository.save(avaliacao);
-        return AvaliacaoMapper.toResponse(avaliacaoCadastrada, user.getNome(), curso.getTitulo());
+
+        atualizarNotaDoCurso(idCurso);
+
+        return avaliacaoCadastrada;
+    }
+
+    public void atualizarNotaDoCurso(Long idCurso){
+        List<Avaliacao> avaliacoes = listarAvaliacaoDoCurso(idCurso);
+        cursoService.atualizarNotaDoCurso(idCurso, avaliacoes);
     }
 
     public Avaliacao buscarAvaliacaoPorId(Long id){
@@ -71,18 +78,21 @@ public class AvaliacaoService {
     public Avaliacao alterarNotadaAvaliacao(Long id, Double novaNota){
         Avaliacao avaliacao = buscarAvaliacaoPorId(id);
         avaliacao.setNota(novaNota);
-        return avaliacao;
+        Avaliacao avaliacaoAtualizada = avaliacaoRepository.save(avaliacao);
+        atualizarNotaDoCurso(avaliacaoAtualizada.getCurso().getId());
+        return avaliacaoAtualizada;
     }
 
     public Avaliacao alterarComentariodaAvaliacao(Long id, String novoComentario){
         Avaliacao avaliacao = buscarAvaliacaoPorId(id);
         avaliacao.setComentario(novoComentario);
-        return avaliacao;
+        return avaliacaoRepository.save(avaliacao);
     }
 
     public void deletarAvaliacao(Long id){
         Avaliacao avaliacao = buscarAvaliacaoPorId(id);
         avaliacaoRepository.delete(avaliacao);
+        atualizarNotaDoCurso(avaliacao.getCurso().getId());
     }
 
 }

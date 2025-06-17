@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 
 @Entity
 @Data
@@ -20,6 +19,8 @@ public class Avaliacao {
     private String comentario;
 
     private Long idUsuario;
+
+    private String nomeUsuario;
 
     @ManyToOne
     private Curso curso;

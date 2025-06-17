@@ -1,5 +1,6 @@
 package com.cursos.service;
 
+import com.cursos.entity.Avaliacao;
 import com.cursos.entity.Curso;
 import com.cursos.exception.CursoConflitoException;
 import com.cursos.exception.CursoNaoEncontradoException;
@@ -20,9 +21,11 @@ public class CursoService {
     }
 
     public Curso cadastrarNovoCurso(Curso cursoParaCadastrar){
-        if (cursoRepository.existsByTituloOrDescricaoAllIgnoreCase(cursoParaCadastrar.getTitulo(), cursoParaCadastrar.getDescricao())){
+        if (cursoRepository.existsByTituloContainingIgnoreCaseOrDescricaoContainingIgnoreCase
+                (cursoParaCadastrar.getTitulo(), cursoParaCadastrar.getDescricao())){
             throw new CursoConflitoException("Curso com Titulo ou Descrição ja cadastrado!");
         }
+        cursoParaCadastrar.setNota(0.0);
         return cursoRepository.save(cursoParaCadastrar);
     }
 
@@ -35,30 +38,30 @@ public class CursoService {
         if(cursoRepository.existsByTitulo(novoTItulo)){
             throw new CursoConflitoException("Curso com Titulo identico ja cadastrado!");
         }
-        Curso cursoAtualizado = cursoRepository.save(buscarCursoPorId(id));
-        cursoAtualizado.setTitulo(novoTItulo);
-        return cursoAtualizado;
+        Curso cursoParaAtualizar = buscarCursoPorId(id);
+        cursoParaAtualizar.setTitulo(novoTItulo);
+        return cursoRepository.save(cursoParaAtualizar);
     }
 
     public Curso atualizarDescricaoDoCurso(Long id, String novaDescricao){
         if(cursoRepository.existsByDescricao(novaDescricao)){
             throw new CursoConflitoException("Curso com Descrição identico ja cadastrado!");
         }
-        Curso cursoAtualizado = cursoRepository.save(buscarCursoPorId(id));
-        cursoAtualizado.setDescricao(novaDescricao);
-        return cursoAtualizado;
+        Curso cursoParaAtualizar = buscarCursoPorId(id);
+        cursoParaAtualizar.setDescricao(novaDescricao);
+        return cursoRepository.save(cursoParaAtualizar);
     }
 
     public Curso atualizarCategoria(Long id, String novaCategoria){
-        Curso cursoAtualizado = cursoRepository.save(buscarCursoPorId(id));
-        cursoAtualizado.setCategoria(novaCategoria);
-        return cursoAtualizado;
+        Curso cursoParaAtualizar = buscarCursoPorId(id);
+        cursoParaAtualizar.setCategoria(novaCategoria);
+        return cursoRepository.save(cursoParaAtualizar);
     }
 
     public Curso atualizarPreco(Long id, Double novoPreco){
-        Curso cursoAtualizado = cursoRepository.save(buscarCursoPorId(id));
-        cursoAtualizado.setPreco(novoPreco);
-        return cursoAtualizado;
+        Curso cursoParaAtualizar = buscarCursoPorId(id);
+        cursoParaAtualizar.setPreco(novoPreco);
+        return cursoRepository.save(cursoParaAtualizar);
     }
 
     public void deletarCursoPorId(Long id){
@@ -66,14 +69,13 @@ public class CursoService {
         cursoRepository.delete(cursoParaDeletar);
     }
 
-    public void deletarCursoPorTitulo(String titulo){
-        Curso cursoParaDeletar = cursoRepository.findByTitulo(titulo)
-                .orElseThrow(() -> new CursoNaoEncontradoException("Curso com Título não encontrado."));
-        cursoRepository.delete(cursoParaDeletar);
+    public List<Curso> listarPorCategoria(String categoria) {
+        return cursoRepository.findAllByCategoriaContaining(categoria);
     }
 
-    public Curso buscarCursoPorNome(String nome) {
-        return cursoRepository.findByTitulo(nome)
-                .orElseThrow(() -> new CursoNaoEncontradoException("Curso com ID não encontrado!"));
+    public void atualizarNotaDoCurso(Long idCurso, List<Avaliacao> avaliacoes) {
+        Curso curso = buscarCursoPorId(idCurso);
+        curso.atualizarNota(avaliacoes);
+        cursoRepository.save(curso);
     }
 }
