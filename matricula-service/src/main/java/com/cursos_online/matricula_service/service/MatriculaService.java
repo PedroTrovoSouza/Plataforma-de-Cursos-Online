@@ -1,14 +1,14 @@
 package com.cursos_online.matricula_service.service;
 
-import com.cursos.dto.curso.CursoResponseDto;
 import com.cursos.dto.curso.CursoResponseMatricula;
-import com.cursos_online.matricula_service.dto.AlunoDTO;
 import com.cursos_online.matricula_service.dto.MatriculaResponseDTO;
 import com.cursos_online.matricula_service.dto.MatriculaRequestDTO;
 import com.cursos_online.matricula_service.dto.UsuarioDTO;
 import com.cursos_online.matricula_service.entity.Matricula;
 import com.cursos_online.matricula_service.mapper.MapperMatricula;
+import com.cursos_online.matricula_service.messaging.producer.MatriculaProducer;
 import com.cursos_online.matricula_service.repository.MatriculaRepository;
+import com.cursos_online.usuario_service.dto.UsuarioEmailEventoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -29,6 +29,9 @@ public class MatriculaService {
 
     @Autowired
     private MapperMatricula mapper;
+
+    @Autowired
+    private MatriculaProducer matriculaProducer;
 
     private final WebClient webCurso;
     private final WebClient webUsuario;
@@ -74,6 +77,10 @@ public class MatriculaService {
             MatriculaResponseDTO response = mapper.toMatriculaResponse(salva);
             response.setNomeCurso(cursoResponse.getTitulo());
             response.setData_matricula(LocalDate.now());
+
+            UsuarioEmailEventoDto eventoDto = new UsuarioEmailEventoDto(usuarioResponse.getNome(), emailUsuario);
+            matriculaProducer.enviarEventoMatriculaRealizada(eventoDto);
+
             return response;
 
         } catch (WebClientResponseException.NotFound e) {
@@ -96,8 +103,6 @@ public class MatriculaService {
 
     public List<UsuarioDTO> buscarUsuariosMatriculados(long idCurso) {
 
-        System.out.println("ID do curso recebido: " + idCurso);
-
         List<UsuarioDTO> todosUsuarios = webUsuario.get()
                 .uri("/usuario/listarInterno")
                 .retrieve()
@@ -107,12 +112,19 @@ public class MatriculaService {
 
         List<Long> idsMatriculados = matriculaRepository.buscarIdsUsuariosPorCurso(idCurso);
 
-        System.out.println("IDS Matriculados: " + idsMatriculados);
-        System.out.println("Usuários disponíveis: " + todosUsuarios);
-
         return todosUsuarios.stream()
                 .filter(usuario -> idsMatriculados.contains(usuario.getId()))
                 .collect(Collectors.toList());
+    }
+
+    public Matricula buscarDadosMatricula(long id){
+        Optional<Matricula> matriculaEncontrada = matriculaRepository.findById(id);
+
+        if (matriculaEncontrada.isEmpty()){
+            throw new RuntimeException("Nenhuma matricula encontrada com esse id");
+        }
+
+        return matriculaEncontrada.get();
     }
 
     public void cancelarMatricula(long idMatricula) {
@@ -120,6 +132,7 @@ public class MatriculaService {
         if (matriculaEncontrada.isEmpty()) {
             throw new RuntimeException("Matrícula não encontrada");
         }
+
         matriculaRepository.delete(matriculaEncontrada.get());
     }
 }
