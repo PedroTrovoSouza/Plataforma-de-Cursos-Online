@@ -1,5 +1,5 @@
 package com.cursos.service;
-import com.cursos.dto.avaliacao.AvaliacaoResponseDto;
+import com.cursos.dto.avaliacao.AvaliacaoCadastroDto;
 import com.cursos.dto.usuario.UsuarioResponseDto;
 import com.cursos.entity.Avaliacao;
 import com.cursos.entity.Curso;
@@ -32,7 +32,7 @@ public class AvaliacaoService {
         return avaliacaoRepository.findAll();
     }
 
-    public List<AvaliacaoResponseDto> listarAvaliacaoDoUsuario(Long idUsuario){
+    public List<AvaliacaoCadastroDto> listarAvaliacaoDoUsuario(Long idUsuario){
         String urlUsuarios = "/usuario/" + idUsuario;
         UsuarioResponseDto user = webUsuario.get()
                 .uri(urlUsuarios)
@@ -42,25 +42,26 @@ public class AvaliacaoService {
         List<Avaliacao> avaliacoes = avaliacaoRepository.findAllByIdUsuario(idUsuario);
 
         return avaliacoes.stream().map(avaliacao ->
-                AvaliacaoMapper.toResponse(avaliacao, user.getNome(), avaliacao.getCurso().getTitulo())).toList();
+                AvaliacaoMapper.toResponse(avaliacao, avaliacao.getCurso().getTitulo())).toList();
     }
 
     public List<Avaliacao> listarAvaliacaoDoCurso(Long idCurso){
         return avaliacaoRepository.findAllByCursoId(idCurso);
     }
 
-    public AvaliacaoResponseDto avaliarCurso(Avaliacao avaliacao, Long idCurso){
+    public AvaliacaoCadastroDto avaliarCurso(Avaliacao avaliacao, Long idCurso){
         String urlUsuarios = "/usuario/" + avaliacao.getIdUsuario();
         UsuarioResponseDto user = webUsuario.get()
                 .uri(urlUsuarios)
                 .retrieve()
                 .bodyToMono(UsuarioResponseDto.class)
                 .block();
+        avaliacao.setNomeUsuario(user.getNome());
         Curso curso = cursoService.buscarCursoPorId(idCurso);
         avaliacao.setCurso(curso);
 
         Avaliacao avaliacaoCadastrada = avaliacaoRepository.save(avaliacao);
-        return AvaliacaoMapper.toResponse(avaliacaoCadastrada, user.getNome(), curso.getTitulo());
+        return AvaliacaoMapper.toResponse(avaliacaoCadastrada, curso.getTitulo());
     }
 
     public Avaliacao buscarAvaliacaoPorId(Long id){

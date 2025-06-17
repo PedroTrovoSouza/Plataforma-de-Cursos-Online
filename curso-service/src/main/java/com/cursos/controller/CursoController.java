@@ -33,14 +33,14 @@ public class CursoController {
                         .cadastrarNovoCurso(curso)));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<CursoResponseDto> buscarCursoPorId(@PathVariable Long id){
         Curso curso = cursoService.buscarCursoPorId(id);
         CursoResponseDto response = CursoMapper.toResponseDto(curso);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{nome}")
+    @GetMapping("/nome/{nome}")
     public ResponseEntity<CursoResponseDto> buscarCursoPorNome(@PathVariable String nome){
         Curso curso = cursoService.buscarCursoPorNome(nome);
         CursoResponseDto response = CursoMapper.toResponseDto(curso);
