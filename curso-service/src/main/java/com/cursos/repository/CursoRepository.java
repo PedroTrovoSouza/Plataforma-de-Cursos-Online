@@ -16,5 +16,7 @@ public interface CursoRepository extends JpaRepository<Curso, Long> {
 
     boolean existsByDescricao(String descricao);
 
+    Curso findByTitulo(String titulo);
+
     List<Curso> findAllByCategoriaContaining(String categoria);
 }

@@ -34,6 +34,16 @@ public class CursoService {
                 .orElseThrow(() -> new CursoNaoEncontradoException("Curso com ID não encontrado!"));
     }
 
+    public Curso buscarCursoPorNome(String nomeCurso){
+        Curso cursoEncontrado = cursoRepository.findByTitulo(nomeCurso);
+
+        if(cursoEncontrado == null){
+            throw new RuntimeException("Curso nao encontrado");
+        }
+
+        return cursoEncontrado;
+    }
+
     public Curso atualizarTituloDoCurso(Long id, String novoTItulo){
         if(cursoRepository.existsByTitulo(novoTItulo)){
             throw new CursoConflitoException("Curso com Titulo identico ja cadastrado!");
