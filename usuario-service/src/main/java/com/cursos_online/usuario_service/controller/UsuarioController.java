@@ -28,18 +28,18 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
-        UsuarioResponseDto usuario = service.autenticarUsuario(loginRequest.getEmail(), loginRequest.getSenha());
+    public ResponseEntity<String> login(@RequestBody LoginRequestDTO loginRequest) {
+        Usuario usuario = service.autenticarUsuario(loginRequest);
 
         if (usuario == null) {
-            return ResponseEntity.status(401).body(new LoginResponseDTO("Credenciais inválidas"));
+            return ResponseEntity.status(401).body("Credenciais inválidas");
         }
 
         String token = jwtUtil.generateToken(usuario.getEmail());
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        return ResponseEntity.ok(token);
     }
 
-@PostMapping
+@PostMapping("/cadastro")
     public ResponseEntity<UsuarioResponseDto> cadastrar(@RequestBody UsuarioRequestDto dto) {
         UsuarioResponseDto response = service.cadastrarUsuario(dto);
 

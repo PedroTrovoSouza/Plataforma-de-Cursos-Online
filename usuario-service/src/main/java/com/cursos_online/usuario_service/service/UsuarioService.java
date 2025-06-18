@@ -2,6 +2,7 @@ package com.cursos_online.usuario_service.service;
 
 import com.cursos_online.usuario_service.dto.*;
 import com.cursos_online.usuario_service.entity.Usuario;
+import com.cursos_online.usuario_service.exception.UsuarioNaoEncontradoException;
 import com.cursos_online.usuario_service.mapper.UsuarioMapper;
 import com.cursos_online.usuario_service.messaging.producer.UsuarioProducer;
 import com.cursos_online.usuario_service.repository.UsuarioRepository;
@@ -9,10 +10,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UsuarioService {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UsuarioProducer usuarioProducer;
@@ -23,14 +28,10 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public UsuarioResponseDto autenticarUsuario(String email, String senha) {
-        Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
-
-        if (usuario == null || !usuario.getSenha().equals(senha)) {
-            return null;
-        }
-
-        return UsuarioMapper.toResponseDto(usuario);
+    public Usuario autenticarUsuario(LoginRequestDTO login) {
+        return usuarioRepository.findByEmail(login.getEmail())
+                .filter(user -> passwordEncoder.matches(login.getSenha(), user.getSenha()))
+                .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuario com email e senha nao encontrados."));
     }
 
     public UsuarioResponseDto cadastrarUsuario(UsuarioRequestDto usuarioRequestDto) {
@@ -56,7 +57,8 @@ public class UsuarioService {
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new IllegalArgumentException("Já existe um usuário cadastrado com este e-mail.");
         }
-
+        String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
+        usuario.setSenha(senhaCriptografada);
         usuarioRepository.save(usuario);
 
         UsuarioEmailEventoDto eventoDto = new UsuarioEmailEventoDto(usuario.getNome(), usuario.getEmail());

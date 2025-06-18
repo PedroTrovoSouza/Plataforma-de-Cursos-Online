@@ -21,44 +21,70 @@ import java.util.Base64;
 public class AuthWebFilter implements WebFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthWebFilter.class);
-
     private final Key secretKey;
 
-    public AuthWebFilter(@Value("${api.security.token.secret}") String secretKeyBase64) {
+    private static final String[] PUBLIC_URLS = {
+            "/api/usuarios/usuario/cadastro",
+            "/api/usuarios/usuario**",
+            "/api/usuarios/usuario/login"
+    };
+
+    public AuthWebFilter(@Value("${api.security.token.secret}") String secretKeyString) {
         try {
-            this.secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKeyBase64));
+            this.secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKeyString));
         } catch (Exception e) {
-            logger.error("Erro ao decodificar a chave secreta: {}", e.getMessage());
-            throw new IllegalArgumentException("Chave secreta inválida. Verifique a configuração em jwt.secret", e);
+            logger.error("Erro ao criar a chave JWT: {}", e.getMessage());
+            throw new IllegalArgumentException(
+                    "Chave secreta inválida. Verifique a configuração em api.security.token.secret", e);
         }
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String path = exchange.getRequest().getPath().toString();
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            logger.warn("Cabeçalho Authorization ausente ou inválido: {}", authHeader);
+        logger.info("Path da requisição: {}", path);
+
+        // Se a URL for pública, pula a autenticação
+        for (String publicUrl : PUBLIC_URLS) {
+            if (path.startsWith(publicUrl)) {
+                return chain.filter(exchange);
+            }
+        }
+
+        String token = recoverToken(exchange);
+
+        if (token == null) {
+            logger.info("Cabeçalho Authorization ausente ou inválido");
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
 
-        String token = authHeader.substring(7);
+        logger.info("Chegou aqui!!");
+        logger.info("Chave secreta (bytes): {}", Base64.getEncoder().encodeToString(secretKey.getEncoded()));
+        logger.info("Token recebido: {}", token);
+
         try {
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token);
-            logger.debug("Token JWT válido para a requisição: {}", exchange.getRequest().getURI());
+
+            logger.debug("Token JWT válido para a requisição: {}", path);
             return chain.filter(exchange);
+
         } catch (JwtException e) {
-            logger.warn("Falha na validação do token JWT: {}", e.getMessage());
+            logger.warn("Falha na validação do token JWT", e);
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
-        } catch (Exception e) {
-            logger.error("Erro inesperado ao validar token: {}", e.getMessage());
-            exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
-            return exchange.getResponse().setComplete();
         }
+    }
+
+    private String recoverToken(ServerWebExchange exchange) {
+        String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return null;
+        }
+        return authHeader.replace("Bearer ", "");
     }
 }

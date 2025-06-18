@@ -17,30 +17,41 @@ public class GatewayController {
         this.webClient = WebClient.builder().build();
     }
 
-    @RequestMapping("/{service}/{path:^(?!api).*$}/**")
+    @RequestMapping("/{service}/**")
     public Mono<ResponseEntity<String>> proxy(
             @PathVariable String service,
-            @PathVariable String path,
             @RequestHeader HttpHeaders headers,
             @RequestParam(required = false) MultiValueMap<String, String> queryParams,
             @RequestBody(required = false) Mono<String> body,
             ServerHttpRequest request) {
 
-        String baseUrl = switch (service) {
+        String url = switch (service) {
             case "conteudos" -> "http://localhost:8083";
             case "cursos" -> "http://localhost:8081";
             case "matriculas" -> "http://localhost:8080";
             case "usuarios" -> "http://localhost:8082";
-            case "certificados" -> "http://localhost:8085";
+            case "certificados" -> "http://localhost:8084";
             default -> null;
         };
 
-        if (baseUrl == null) return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Serviço não encontrado"));
+        if (url == null) {
+            return Mono.just(ResponseEntity.status(400).build());
+        }
 
-        String fullPath = request.getURI().getRawPath().replace("/api/" + service, "");
+        String originalPath = request.getURI().getRawPath();
+        String prefixToStrip = "/api/" + service;
+        String path = originalPath.substring(prefixToStrip.length());
+        String uri = url + path;
+
+        if (queryParams != null && !queryParams.isEmpty()) {
+            uri += "?" + queryParams.toSingleValueMap().entrySet().stream()
+                    .map(entry -> entry.getKey() + "=" + entry.getValue())
+                    .reduce((a, b) -> a + "&" + b)
+                    .orElse("");
+        }
 
         return webClient.method(request.getMethod())
-                .uri(baseUrl + fullPath)
+                .uri(uri)
                 .headers(httpHeaders -> httpHeaders.addAll(headers))
                 .body(body == null ? Mono.empty() : body, String.class)
                 .retrieve()
