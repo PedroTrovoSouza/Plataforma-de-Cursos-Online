@@ -1,11 +1,9 @@
 package com.cursos_online.usuario_service.controller;
 
-import com.cursos_online.usuario_service.dto.UsuarioAtualizarDto;
-import com.cursos_online.usuario_service.dto.UsuarioDTO;
-import com.cursos_online.usuario_service.dto.UsuarioRequestDto;
-import com.cursos_online.usuario_service.dto.UsuarioResponseDto;
+import com.cursos_online.usuario_service.dto.*;
 import com.cursos_online.usuario_service.entity.Usuario;
 import com.cursos_online.usuario_service.repository.UsuarioRepository;
+import com.cursos_online.usuario_service.security.JwtUtil;
 import com.cursos_online.usuario_service.service.UsuarioService;
 import java.util.List;
 
@@ -19,14 +17,29 @@ public class UsuarioController {
 
     private UsuarioService service;
 
+    private final JwtUtil jwtUtil;
+
     @Autowired
     private UsuarioRepository repository;
 
-    public UsuarioController(UsuarioService service) {
+    public UsuarioController(UsuarioService service, JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
         this.service = service;
     }
 
-    @PostMapping
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
+        UsuarioResponseDto usuario = service.autenticarUsuario(loginRequest.getEmail(), loginRequest.getSenha());
+
+        if (usuario == null) {
+            return ResponseEntity.status(401).body(new LoginResponseDTO("Credenciais inválidas"));
+        }
+
+        String token = jwtUtil.generateToken(usuario.getEmail());
+        return ResponseEntity.ok(new LoginResponseDTO(token));
+    }
+
+@PostMapping
     public ResponseEntity<UsuarioResponseDto> cadastrar(@RequestBody UsuarioRequestDto dto) {
         UsuarioResponseDto response = service.cadastrarUsuario(dto);
 

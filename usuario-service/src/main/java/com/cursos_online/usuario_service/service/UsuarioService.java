@@ -22,6 +22,17 @@ public class UsuarioService {
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
+
+    public UsuarioResponseDto autenticarUsuario(String email, String senha) {
+        Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
+
+        if (usuario == null || !usuario.getSenha().equals(senha)) {
+            return null;
+        }
+
+        return UsuarioMapper.toResponseDto(usuario);
+    }
+
     public UsuarioResponseDto cadastrarUsuario(UsuarioRequestDto usuarioRequestDto) {
         Usuario usuario = UsuarioMapper.toEntity(usuarioRequestDto);
 
