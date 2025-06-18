@@ -1,13 +1,13 @@
-package com.cursos_online.usuario_service;
+package com.cursos_online.conteudo_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PlataformaCursosApplication {
+public class PlataformaConteudoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PlataformaCursosApplication.class, args);
+		SpringApplication.run(PlataformaConteudoApplication.class, args);
 	}
 
 }
