@@ -182,7 +182,7 @@ class UsuarioServiceTest {
         when(usuarioRepository.findByEmailEqualsIgnoreCase(email)).thenReturn(Optional.of(usuario));
 
         // Act
-        UsuarioResponseDto resultado = usuarioService.listarUsuarioPorEmail(email);
+        UsuarioDTO resultado = usuarioService.listarUsuarioPorEmail(email);
 
         // Assert
         assertNotNull(resultado);
@@ -200,7 +200,7 @@ class UsuarioServiceTest {
         when(usuarioRepository.findByEmailEqualsIgnoreCase(email)).thenReturn(Optional.empty());
 
         // Act
-        UsuarioResponseDto resultado = usuarioService.listarUsuarioPorEmail(email);
+        UsuarioDTO resultado = usuarioService.listarUsuarioPorEmail(email);
 
         // Assert
         assertNull(resultado);

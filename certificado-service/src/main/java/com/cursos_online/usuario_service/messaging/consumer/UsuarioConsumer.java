@@ -29,7 +29,7 @@ public class UsuarioConsumer {
 
         MatriculaResponseDTO matriculaDto = webMatricula.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/matricula/buscarPorId/{id}")
+                        .path("/matricula/buscar-dados-matricula/{id}")
                         .build(eventoDto.getMatriculaId()))
                 .retrieve()
                 .bodyToMono(MatriculaResponseDTO.class)
