@@ -7,4 +7,5 @@ import java.util.Date;
 @Data
 public class MatriculaResponseDTO {
     private Long idUsuario;
+    private String status;
 }
