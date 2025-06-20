@@ -31,8 +31,10 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // API Stateless
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/usuario/cadastro").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuario/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuario/cadastro").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuario/email/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuario/listarInterno/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

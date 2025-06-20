@@ -1,13 +1,15 @@
 package com.cursos_online.matricula_service.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class MatriculaResponseDTO {
-    LocalDate data_matricula;
-    String status;
-    String nomeCurso;
+    private LocalDate dataMatricula;
+    private String status;
+    private String nomeCurso;
 }

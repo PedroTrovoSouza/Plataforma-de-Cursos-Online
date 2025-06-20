@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.web.util.UriUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +54,7 @@ public class MatriculaService {
 
             Long idCurso = cursoResponse.getId();
 
-            String emailEncoded = UriUtils.encodePathSegment(emailUsuario, StandardCharsets.UTF_8);
+            System.out.println(emailUsuario);
 
             UsuarioDTO usuarioResponse = webUsuario.get()
                     .uri("/usuario/email/{email}", emailUsuario)
@@ -76,7 +74,7 @@ public class MatriculaService {
 
             MatriculaResponseDTO response = mapper.toMatriculaResponse(salva);
             response.setNomeCurso(cursoResponse.getTitulo());
-            response.setData_matricula(LocalDate.now());
+            response.setDataMatricula(LocalDate.now());
 
             UsuarioEmailEventoDto eventoDto = new UsuarioEmailEventoDto(usuarioResponse.getNome(), emailUsuario);
             matriculaProducer.enviarEventoMatriculaRealizada(eventoDto);
@@ -92,13 +90,26 @@ public class MatriculaService {
 
     public List<MatriculaResponseDTO> buscarMatricula() {
         List<Matricula> listaDeMatriculas = matriculaRepository.findAll();
+
         if (listaDeMatriculas.isEmpty()) {
             throw new RuntimeException("Nenhuma matrícula foi encontrada");
         }
 
-        return listaDeMatriculas.stream()
-                .map(mapper::toMatriculaResponse)
-                .collect(Collectors.toList());
+        return listaDeMatriculas.stream().map(m -> {
+            MatriculaResponseDTO dto = mapper.toMatriculaResponse(m);
+
+            CursoResponseMatricula curso = webCurso.get()
+                    .uri("/cursos/id/{id}", m.getIdCurso())
+                    .retrieve()
+                    .bodyToMono(CursoResponseMatricula.class)
+                    .block();
+
+            if (curso != null) {
+                dto.setNomeCurso(curso.getTitulo());
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     public List<UsuarioDTO> buscarUsuariosMatriculados(long idCurso) {

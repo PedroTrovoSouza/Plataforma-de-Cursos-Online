@@ -5,6 +5,7 @@ import com.cursos_online.usuario_service.entity.Usuario;
 import com.cursos_online.usuario_service.repository.UsuarioRepository;
 import com.cursos_online.usuario_service.security.JwtUtil;
 import com.cursos_online.usuario_service.service.UsuarioService;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class UsuarioController {
         return ResponseEntity.ok(token);
     }
 
-@PostMapping("/cadastro")
+    @PostMapping("/cadastro")
     public ResponseEntity<UsuarioResponseDto> cadastrar(@RequestBody UsuarioRequestDto dto) {
         UsuarioResponseDto response = service.cadastrarUsuario(dto);
 
@@ -60,7 +61,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDto> listarUsuarioPorId (@PathVariable Long id) {
+    public ResponseEntity<UsuarioResponseDto> listarUsuarioPorId(@PathVariable Long id) {
         UsuarioResponseDto usuarioPorId = service.listarUsuarioPorId(id);
 
         if (usuarioPorId == null) {
@@ -99,7 +100,7 @@ public class UsuarioController {
         return ResponseEntity.status(200).body("Usuário deletado com sucesso.");
     }
 
-    @GetMapping("listarInterno")
+    @GetMapping("/listarInterno")
     public ResponseEntity<List<UsuarioDTO>> listarUsuariosParaServicos() {
         List<Usuario> usuarios = repository.findAll();
         List<UsuarioDTO> dtos = usuarios.stream()
