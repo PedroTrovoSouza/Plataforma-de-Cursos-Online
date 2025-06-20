@@ -29,7 +29,7 @@ public class MatriculaController {
         }
     }
 
-    @GetMapping("/buscar-matriculas")
+    @GetMapping()
     public ResponseEntity<?> buscarTodasMatriculas() {
         try {
             List<MatriculaResponseDTO> matriculasEncontradas = matriculaService.buscarMatricula();

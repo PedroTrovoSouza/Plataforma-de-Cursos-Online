@@ -54,8 +54,6 @@ public class MatriculaService {
 
             Long idCurso = cursoResponse.getId();
 
-            System.out.println(emailUsuario);
-
             UsuarioDTO usuarioResponse = webUsuario.get()
                     .uri("/usuario/email/{email}", emailUsuario)
                     .retrieve()
@@ -88,6 +86,25 @@ public class MatriculaService {
         }
     }
 
+    private String buscarNomeCursoPorId(Long idCurso) {
+        try {
+            CursoResponseMatricula response = webCurso.get()
+                    .uri("/cursos/id/{id}", idCurso)
+                    .retrieve()
+                    .bodyToMono(CursoResponseMatricula.class)
+                    .block();
+
+            return response != null ? response.getTitulo() : "Curso não encontrado";
+
+        } catch (WebClientResponseException.NotFound e) {
+            System.err.println("Curso com ID " + idCurso + " não encontrado.");
+            return "Curso não encontrado";
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar curso com ID " + idCurso + ": " + e.getMessage());
+            return "Curso não encontrado";
+        }
+    }
+
     public List<MatriculaResponseDTO> buscarMatricula() {
         List<Matricula> listaDeMatriculas = matriculaRepository.findAll();
 
@@ -95,25 +112,22 @@ public class MatriculaService {
             throw new RuntimeException("Nenhuma matrícula foi encontrada");
         }
 
-        return listaDeMatriculas.stream().map(m -> {
-            MatriculaResponseDTO dto = mapper.toMatriculaResponse(m);
+        return listaDeMatriculas.stream()
+                .map(matricula -> {
+                    MatriculaResponseDTO dto = new MatriculaResponseDTO();
+                    dto.setDataMatricula(matricula.getDataMatricula());
+                    dto.setStatus(matricula.getStatus());
 
-            CursoResponseMatricula curso = webCurso.get()
-                    .uri("/cursos/id/{id}", m.getIdCurso())
-                    .retrieve()
-                    .bodyToMono(CursoResponseMatricula.class)
-                    .block();
+                    // Chamada ao método com tratamento
+                    String nomeCurso = buscarNomeCursoPorId(matricula.getIdCurso());
+                    dto.setNomeCurso(nomeCurso);
 
-            if (curso != null) {
-                dto.setNomeCurso(curso.getTitulo());
-            }
-
-            return dto;
-        }).collect(Collectors.toList());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     public List<UsuarioDTO> buscarUsuariosMatriculados(long idCurso) {
-
         List<UsuarioDTO> todosUsuarios = webUsuario.get()
                 .uri("/usuario/listarInterno")
                 .retrieve()
@@ -128,11 +142,11 @@ public class MatriculaService {
                 .collect(Collectors.toList());
     }
 
-    public Matricula buscarDadosMatricula(long id){
+    public Matricula buscarDadosMatricula(long id) {
         Optional<Matricula> matriculaEncontrada = matriculaRepository.findById(id);
 
-        if (matriculaEncontrada.isEmpty()){
-            throw new RuntimeException("Nenhuma matricula encontrada com esse id");
+        if (matriculaEncontrada.isEmpty()) {
+            throw new RuntimeException("Nenhuma matrícula encontrada com esse ID");
         }
 
         return matriculaEncontrada.get();
