@@ -2,6 +2,7 @@ package com.cursos_online.usuario_service.service;
 
 import com.cursos_online.usuario_service.dto.*;
 import com.cursos_online.usuario_service.entity.Usuario;
+import com.cursos_online.usuario_service.exception.ProblemaDeConexaoComRabbitMq;
 import com.cursos_online.usuario_service.exception.UsuarioNaoEncontradoException;
 import com.cursos_online.usuario_service.mapper.UsuarioMapper;
 import com.cursos_online.usuario_service.messaging.producer.UsuarioProducer;
@@ -9,11 +10,13 @@ import com.cursos_online.usuario_service.repository.UsuarioRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class UsuarioService {
 
     @Autowired
@@ -42,7 +45,7 @@ public class UsuarioService {
         }
 
         if (!(usuario.getTipo().equalsIgnoreCase("PROFESSOR") ||
-            usuario.getTipo().equalsIgnoreCase("ALUNO"))) {
+                usuario.getTipo().equalsIgnoreCase("ALUNO"))) {
             throw new IllegalArgumentException("Tipo de usuário inválido. Deve ser 'PROFESSOR' ou 'ALUNO'.");
         }
 
@@ -61,11 +64,17 @@ public class UsuarioService {
         usuario.setSenha(senhaCriptografada);
         usuarioRepository.save(usuario);
 
-        UsuarioEmailEventoDto eventoDto = new UsuarioEmailEventoDto(usuario.getNome(), usuario.getEmail());
-        usuarioProducer.enviarEventoUsuarioCriado(eventoDto);
+        try {
+            UsuarioEmailEventoDto eventoDto = new UsuarioEmailEventoDto(usuario.getNome(), usuario.getEmail());
+            usuarioProducer.enviarEventoUsuarioCriado(eventoDto);
+        } catch (Exception e) {
+            // Só loga o erro, mas continua o processo de cadastro
+            log.warn("Falha ao enviar e-mail para o RabbitMQ: {}", e.getMessage());
+        }
 
         UsuarioResponseDto responseDto = UsuarioMapper.toResponseDto(usuario);
         return responseDto;
+
     }
 
     public List<UsuarioResponseDto> listarTodosUsuarios() {
@@ -98,7 +107,7 @@ public class UsuarioService {
         }
 
         if (!(usuarioAtualizado.getTipo().equalsIgnoreCase("PROFESSOR") ||
-            usuarioAtualizado.getTipo().equalsIgnoreCase("ALUNO"))) {
+                usuarioAtualizado.getTipo().equalsIgnoreCase("ALUNO"))) {
             throw new IllegalArgumentException("Tipo de usuário inválido. Deve ser 'PROFESSOR' ou 'ALUNO'.");
         }
 
