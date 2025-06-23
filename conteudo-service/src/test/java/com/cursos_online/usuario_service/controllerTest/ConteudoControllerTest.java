@@ -67,7 +67,7 @@ public class ConteudoControllerTest {
 
     @Test
     public void testSalvarConteudo() throws Exception {
-        CadastrarConteudoDTO cadastrarDTO = new CadastrarConteudoDTO("Novo Conteudo", "urlNovo");
+        CadastrarConteudoDTO cadastrarDTO = new CadastrarConteudoDTO("Novo Conteudo", "urlNovo", null);
         Conteudo conteudoSalvo = new Conteudo(1L, "Novo Conteudo", "urlNovo", null);
         Mockito.when(conteudoService.salvar(any(CadastrarConteudoDTO.class))).thenReturn(conteudoSalvo);
 

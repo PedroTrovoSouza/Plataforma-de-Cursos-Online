@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.cursos-online</groupId>
-	<artifactId>usuario-service</artifactId>
+	<artifactId>certificado-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>plataforma-cursos</name>
 	<description>Microsserviço responsável por cadastrar usuários na aplicação</description>

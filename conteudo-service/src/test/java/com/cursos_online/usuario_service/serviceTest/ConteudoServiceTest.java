@@ -64,7 +64,7 @@ public class ConteudoServiceTest {
 
     @Test
     public void testSalvar() {
-        CadastrarConteudoDTO dto = new CadastrarConteudoDTO("Novo Conteúdo", "urlNovo");
+        CadastrarConteudoDTO dto = new CadastrarConteudoDTO("Novo Conteúdo", "urlNovo", null);
         Conteudo conteudoParaSalvar = new Conteudo(null, "Novo Conteúdo", "urlNovo", null);
         Conteudo conteudoSalvo = new Conteudo(1L, "Novo Conteúdo", "urlNovo", null);
 

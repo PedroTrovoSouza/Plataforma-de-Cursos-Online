@@ -152,6 +152,21 @@ public class MatriculaService {
         return matriculaEncontrada.get();
     }
 
+    public MatriculaResponseDTO concluirMatricula(long id) {
+        Optional<Matricula> matriculaEncontrada = matriculaRepository.findById(id);
+
+        if (matriculaEncontrada.isEmpty()) {
+            throw new RuntimeException("Matrícula não encontrada");
+        }
+
+        Matricula matricula = matriculaEncontrada.get();
+        matricula.setStatus("Finalizada");
+
+        Matricula matriculaAtualizada = matriculaRepository.save(matricula);
+
+        return mapper.toMatriculaResponse(matriculaAtualizada);
+    }
+
     public void cancelarMatricula(long idMatricula) {
         Optional<Matricula> matriculaEncontrada = matriculaRepository.findById(idMatricula);
         if (matriculaEncontrada.isEmpty()) {
