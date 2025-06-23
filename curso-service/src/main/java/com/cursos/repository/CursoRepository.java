@@ -11,13 +11,13 @@ import java.util.Optional;
 @Repository
 public interface CursoRepository extends JpaRepository<Curso, Long> {
 
-    boolean existsByTituloContainingIgnoreCaseOrDescricaoContainingIgnoreCase(String titulo, String descricao);
-
     boolean existsByTitulo(String titulo);
 
     boolean existsByDescricao(String descricao);
 
     Curso findByTitulo(String titulo);
+
+    Curso findByTituloContaining(String titulo);
 
     List<Curso> findAllByCategoriaContaining(String categoria);
 }
