@@ -57,7 +57,7 @@ public class MatriculaController {
         }
     }
 
-    @PatchMapping("/concluir-curso/${id}")
+    @PatchMapping("/concluir-curso/{id}")
     public ResponseEntity<?> concluirCurso(@PathVariable long id){
         try{
             MatriculaResponseDTO matricula = matriculaService.concluirMatricula(id);

@@ -167,7 +167,6 @@ public class MatriculaService {
         return mapper.toMatriculaResponse(matriculaAtualizada);
     }
 
-
     public void cancelarMatricula(long idMatricula) {
         Optional<Matricula> matriculaEncontrada = matriculaRepository.findById(idMatricula);
         if (matriculaEncontrada.isEmpty()) {
