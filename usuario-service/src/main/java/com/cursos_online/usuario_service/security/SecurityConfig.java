@@ -33,8 +33,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/usuario/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuario/cadastro").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuario/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuario/email/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuario/listarInterno/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -36,7 +36,7 @@ public class UsuarioController {
             return ResponseEntity.status(401).body("Credenciais inválidas");
         }
 
-        String token = jwtUtil.generateToken(usuario.getEmail());
+        String token = jwtUtil.gerarToken(usuario.getEmail());
         return ResponseEntity.ok(token);
     }
 
