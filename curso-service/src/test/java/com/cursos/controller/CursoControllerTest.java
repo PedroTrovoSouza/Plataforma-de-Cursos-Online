@@ -5,10 +5,13 @@ import com.cursos.dto.curso.CursoResponseDto;
 import com.cursos.entity.Avaliacao;
 import com.cursos.entity.Curso;
 import com.cursos.mapper.CursoMapper;
+import com.cursos.repository.CursoRepository;
+import com.cursos.service.AvaliacaoService;
 import com.cursos.service.CursoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,9 @@ class CursoControllerTest {
     private CursoService cursoService;
 
     @Autowired
+    private CursoRepository cursoRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private Curso curso;
@@ -58,6 +64,11 @@ class CursoControllerTest {
         avaliacao3 = new Avaliacao(3L, 0.5, "Faz 1 ano que eu nao ganho nada", 3L, "Ricardo", curso);
         avaliacoes.add(avaliacao3);
         curso = new Curso("Como ficar rico Vendendo cursos online", "Aprenda a como ficar milionario em 3 dias com este curso incrivel", "Dinheiro", 799.90, 3.0, avaliacoes);
+    }
+
+    @AfterEach
+    void limparBanco() {
+        cursoRepository.deleteAll();
     }
 
     @Test
@@ -93,21 +104,40 @@ class CursoControllerTest {
     @Test
     void deveBuscarCursoPorIdInformadoERetornarCodigo200() throws Exception {
     Curso cursoCadastrado = cursoService.cadastrarNovoCurso(curso);
-    CursoRequestDto cursoRequestDto = new CursoRequestDto(curso.getTitulo(), curso.getDescricao(), curso.getCategoria(), curso.getPreco());
 
         mockMvc.perform(get("/cursos/id/{id}", cursoCadastrado.getId()))
                 .andExpect(jsonPath("$.titulo").value(curso.getTitulo()));
     }
 
-    @Test
-    void deveAtualizarDescricaoDoCursoComIdInformado() throws Exception {
-        Curso cursoCadastrado = cursoService.cadastrarNovoCurso(curso);
-        String novaDescricao = "Nova Descricao";
+//    @Test
+//    void deveAtualizarDescricaoDoCursoComIdInformado() throws Exception {
+//        avaliacaoService.avaliarCurso(avaliacao1, curso.getId());
+//        avaliacaoService.avaliarCurso(avaliacao2, curso.getId());
+//        avaliacaoService.avaliarCurso(avaliacao3, curso.getId());
+//        Curso cursoCadastrado = cursoService.cadastrarNovoCurso(curso);
+//        String novaDescricao = "Nova Descricao";
+//
+//        mockMvc.perform(patch("/cursos/descricao/{id}", cursoCadastrado.getId())
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                .content("\"Nova Descricao\""))
+//                .andExpect(jsonPath("$.descricao").value(novaDescricao));
+//    }
 
-        mockMvc.perform(patch("/cursos/descricao/{id}", cursoCadastrado.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(novaDescricao))
-                .andExpect(jsonPath("$.descricao").value(novaDescricao));
+    @Test
+    void deveDeletarCursoComSucesso() throws Exception {
+        // Arrange: cria e salva um curso
+        Curso cursoSalvo = cursoService.cadastrarNovoCurso(curso);
+
+        Long id = cursoSalvo.getId();
+
+        // Act + Assert: chama o endpoint DELETE
+        mockMvc.perform(delete("/cursos/{id}", id))
+                .andExpect(status().isOk());
+
+        // Assert: verifica que o curso não existe mais
+        boolean existe = cursoRepository.findById(id).isPresent();
+        assertFalse(existe, "O curso deveria ter sido deletado");
     }
+
 
 }

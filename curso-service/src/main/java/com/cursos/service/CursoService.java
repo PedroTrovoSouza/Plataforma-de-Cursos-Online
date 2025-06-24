@@ -28,10 +28,6 @@ public class CursoService {
         return cursoRepository.save(cursoParaCadastrar);
     }
 
-    public Curso buscarCursoPorId(Long id){
-        return cursoRepository.findById(id)
-                .orElseThrow(() -> new CursoNaoEncontradoException("Curso com ID não encontrado!"));
-    }
 
     public Curso buscarCursoPorNome(String nomeCurso){
         Curso cursoEncontrado = cursoRepository.findByTitulo(nomeCurso);
@@ -71,6 +67,11 @@ public class CursoService {
         Curso cursoParaAtualizar = buscarCursoPorId(id);
         cursoParaAtualizar.setPreco(novoPreco);
         return cursoRepository.save(cursoParaAtualizar);
+    }
+
+    public Curso buscarCursoPorId(Long id){
+        return cursoRepository.findById(id)
+                .orElseThrow(() -> new CursoNaoEncontradoException("Curso com ID não encontrado!"));
     }
 
     public void deletarCursoPorId(Long id){

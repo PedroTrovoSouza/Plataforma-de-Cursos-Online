@@ -4,6 +4,7 @@ import com.cursos.entity.Avaliacao;
 import com.cursos.entity.Curso;
 import com.cursos.exception.CursoConflitoException;
 import com.cursos.repository.CursoRepository;
+import kotlin.collections.EmptyList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,7 +102,7 @@ class CursoServiceTest {
         //Given
 
         //When
-        when(cursoRepository.findAll()).thenReturn(List.of(any()));
+        when(cursoRepository.findAll()).thenReturn(Collections.emptyList());
 
         //Then
         List<Curso> resultado = cursoService.listarTodosCursos();
@@ -133,6 +135,7 @@ class CursoServiceTest {
 
     @Test
     void deveDeletarCursoComIdInformado(){
+        when(cursoRepository.findById(any())).thenReturn(Optional.of(curso));
         doNothing().when(cursoRepository).delete(curso);
         cursoService.deletarCursoPorId(1L);
         verify(cursoRepository).delete(curso);

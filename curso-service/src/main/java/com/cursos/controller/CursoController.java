@@ -83,7 +83,7 @@ public class CursoController {
                 CursoMapper.toResponseDto(curso));
     }
 
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarCursoPorId(@PathVariable Long id){
         cursoService.deletarCursoPorId(id);
         return ResponseEntity.ok().build();
