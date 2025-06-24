@@ -160,7 +160,7 @@ public class MatriculaService {
         }
 
         Matricula matricula = matriculaEncontrada.get();
-        matricula.setStatus("Finalizada");
+        matricula.setStatus("CONCLUIDA");
 
         Matricula matriculaAtualizada = matriculaRepository.save(matricula);
 
