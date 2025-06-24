@@ -21,8 +21,7 @@ public class CursoService {
     }
 
     public Curso cadastrarNovoCurso(Curso cursoParaCadastrar){
-        if (cursoRepository.existsByTituloContainingIgnoreCaseOrDescricaoContainingIgnoreCase
-                (cursoParaCadastrar.getTitulo(), cursoParaCadastrar.getDescricao())){
+        if (cursoRepository.existsByTitulo(cursoParaCadastrar.getTitulo())){
             throw new CursoConflitoException("Curso com Titulo ou Descrição ja cadastrado!");
         }
         cursoParaCadastrar.setNota(0.0);
@@ -85,6 +84,7 @@ public class CursoService {
 
     public void atualizarNotaDoCurso(Long idCurso, List<Avaliacao> avaliacoes) {
         Curso curso = buscarCursoPorId(idCurso);
+        curso.setAvaliacoes(avaliacoes);
         curso.atualizarNota(avaliacoes);
         cursoRepository.save(curso);
     }

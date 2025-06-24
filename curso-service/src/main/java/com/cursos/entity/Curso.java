@@ -1,6 +1,7 @@
 package com.cursos.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -46,5 +47,18 @@ public class Curso {
                 .mapToDouble(Avaliacao::getNota)
                 .average()
                 .orElse(0.0);
+    }
+
+    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
+        this.avaliacoes = avaliacoes;
+    }
+
+    public Curso(String titulo, String descricao, String categoria, Double preco, Double nota, List<Avaliacao> avaliacoes) {
+        this.titulo = titulo;
+        this.descricao = descricao;
+        this.categoria = categoria;
+        this.preco = preco;
+        this.nota = nota;
+        this.avaliacoes = avaliacoes;
     }
 }
