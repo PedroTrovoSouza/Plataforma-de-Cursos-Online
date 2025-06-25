@@ -89,10 +89,10 @@ Baseada em arquitetura de **microserviços**, a plataforma visa facilitar a manu
 ## 🚀Guia de Instalação
 
 ###💡Clone o repositório
------------------------------------------------------------------------------------------------
-git clone [Cursos_Online](https://github.com/PedroTrovoSouza/Plataforma-de-Cursos-Online.git) |
-cd Plataforma-de-Cursos-Online                                                                |
------------------------------------------------------------------------------------------------
+
+| git clone [Cursos_Online](https://github.com/PedroTrovoSouza/Plataforma-de-Cursos-Online.git) |
+| cd Plataforma-de-Cursos-Online                                                                |
+
 
 ✅ Requisitos
 - Java 17 ou superior
