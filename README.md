@@ -86,6 +86,73 @@ Baseada em arquitetura de **microserviços**, a plataforma visa facilitar a manu
 
 ---
 
+## 🚀Guia de Instalação
+
+###💡Clone o repositório
+-----------------------------------------------------------------------------------------------
+git clone [Cursos_Online](https://github.com/PedroTrovoSouza/Plataforma-de-Cursos-Online.git) |
+cd Plataforma-de-Cursos-Online                                                                |
+-----------------------------------------------------------------------------------------------
+
+✅ Requisitos
+- Java 17 ou superior
+- Maven
+- MySQL Workbench
+- Insomnia (ou Postman)
+- Git
+
+### 🐇 Instalação do RabbitMQ
+
+- Baixar o RabbitMQ Server - https://github.com/rabbitmq/rabbitmq-server/releases/download/v4.1.0/rabbitmq-server-4.1.0.exe
+ 
+- Baixar o Erlang - https://github.com/erlang/otp/releases/download/OTP-28.0/otp_win64_28.0.exe
+ 
+- Iniciar o Servidor
+rabbitmq-service.bat
+ 
+- Verificar se existe processo rodando
+netstat -ano | findstr :25672
+ 
+- Finalizar a tarefa para rodar:
+taskkill /PID <PID> /F
+ 
+- Verificar se esta rodando como serviço
+Get-Service | Where-Object {$_.DisplayName -like "*RabbitMQ*"}
+ 
+- Se estiver rodando, pare
+Stop-Service -Name RabbitMQ
+ 
+- Instalar Pluggins para Projeto
+rabbitmq-plugins enable rabbitmq_management
+ 
+- Rodar a aplicação
+rabbitmq-server.bat
+
+- Parar a Mensageria 
+rabbitmqctl stop (deve ser usado em outro prompt de comando)
+
+###🛢️ Criação do Banco de Dados no MySQL Workbench
+- 1 Abra o MySQL Workbench.
+- 2 Conecte-se ao servidor local.
+- 3 Execute o seguinte script SQL para criar o banco:
+----------------------------------
+| create database cursos_online; |
+| use database cursos_online;    |
+----------------------------------
+- 4 (Opcional) Crie o usuário e dê permissões:
+-------------------------------------------------------------------------
+| CREATE USER 'cursos_user'@'localhost' IDENTIFIED BY 'senha_segura';   |
+| GRANT ALL PRIVILEGES ON cursos_online.* TO 'cursos_user'@'localhost'; |
+| FLUSH PRIVILEGES;                                                     |
+-------------------------------------------------------------------------
+- 5 Atualize o application.properties da aplicação com suas credenciais:
+-------------------------------------------------------------------
+| spring.datasource.url=jdbc:mysql://localhost:3306/cursos_online |
+| spring.datasource.username=cursos_user                          |
+| spring.datasource.password=senha_segura                         |
+-------------------------------------------------------------------
+---
+
 ## 📈 Escalabilidade & Monitoramento
 
 - Microsserviços independentes garantem modularidade.
