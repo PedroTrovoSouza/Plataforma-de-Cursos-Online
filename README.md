@@ -96,8 +96,8 @@ Baseada em arquitetura de **microserviços**, a plataforma visa facilitar a manu
 
 ## 👨‍🏫 Equipe Técnica
 
-- [**Fabio Azevedo**](https://github.com/FabioPojects) 
-- [**Fernando Amorim**](https://github.com/FernandoAmoriim) 
-- [**João Rossi**](https://github.com/JoaoRossii)
-- [**Pedro Trovo**](https://github.com/PedroTrovoSouza)
+- [**Fabio Azevedo**](https://github.com/FabioPojects -> Microserviço de Conteudo e JWT
+- [**Fernando Amorim**](https://github.com/FernandoAmoriim -> Microserviço de Curso e JWT
+- [**João Rossi**](https://github.com/JoaoRossii) -> Microserviço de Usuario, Certificado e RabbitMQ
+- [**Pedro Trovo**](https://github.com/PedroTrovoSouza) -> Microserviço de Matricula, RabbitMQ e testes de carga
 
