@@ -131,26 +131,45 @@ rabbitmq-server.bat
 - Parar a Mensageria 
 rabbitmqctl stop (deve ser usado em outro prompt de comando)
 
-###🛢️ Criação do Banco de Dados no MySQL Workbench
-- 1 Abra o MySQL Workbench.
-- 2 Conecte-se ao servidor local.
-- 3 Execute o seguinte script SQL para criar o banco:
+### 🛢️ Criação do Banco de Dados no MySQL Workbench
+- 1. Abra o MySQL Workbench.
+- 2. Conecte-se ao servidor local.
+- 3. Execute o seguinte script SQL para criar o banco:
 ----------------------------------
 | create database cursos_online; |
 | use database cursos_online;    |
 ----------------------------------
-- 4 (Opcional) Crie o usuário e dê permissões:
+- 4. (Opcional) Crie o usuário e dê permissões:
 -------------------------------------------------------------------------
 | CREATE USER 'cursos_user'@'localhost' IDENTIFIED BY 'senha_segura';   |
 | GRANT ALL PRIVILEGES ON cursos_online.* TO 'cursos_user'@'localhost'; |
 | FLUSH PRIVILEGES;                                                     |
 -------------------------------------------------------------------------
-- 5 Atualize o application.properties da aplicação com suas credenciais:
+- 5. Atualize o application.properties da aplicação com suas credenciais:
 -------------------------------------------------------------------
 | spring.datasource.url=jdbc:mysql://localhost:3306/cursos_online |
 | spring.datasource.username=cursos_user                          |
 | spring.datasource.password=senha_segura                         |
 -------------------------------------------------------------------
+
+### 🌐 Criação dos Endpoints no Insomnia - Trilha Padrão
+- Cadastrar Usuário
+http://localhost:8085/api/usuarios/usuario/cadastro
+- Login de Usuário
+http://localhost:8085/api/usuarios/usuario/login
+- Cadastrar Curso
+http://localhost:8085/api/cursos/cursos
+- Cadastrar Conteúdo
+http://localhost:8085/api/conteudos/conteudos
+- Realizar Matricula em Curso
+http://localhost:8085/api/matriculas/matricula/cadastrar/curso_para_matricular
+- Concluir Matricula (finalizar curso)
+http://localhost:8085/api/matriculas/matricula/concluir-curso/{idUsuario}
+- Emitir Certificado do Curso
+http://localhost:8085/api/certificados/certificado
+- Avaliar Curso
+http://localhost:8085/api/cursos/avaliacoes
+
 ---
 
 ## 📈 Escalabilidade & Monitoramento
