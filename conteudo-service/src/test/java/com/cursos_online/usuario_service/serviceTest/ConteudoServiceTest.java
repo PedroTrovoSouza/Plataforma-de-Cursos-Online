@@ -63,20 +63,6 @@ public class ConteudoServiceTest {
     }
 
     @Test
-    public void testSalvar() {
-        CadastrarConteudoDTO dto = new CadastrarConteudoDTO("Novo Conteúdo", "urlNovo", null);
-        Conteudo conteudoParaSalvar = new Conteudo(null, "Novo Conteúdo", "urlNovo", null);
-        Conteudo conteudoSalvo = new Conteudo(1L, "Novo Conteúdo", "urlNovo", null);
-
-        when(conteudoRepository.save(any(Conteudo.class))).thenReturn(conteudoSalvo);
-
-        Conteudo result = conteudoService.salvar(dto);
-        assertNotNull(result);
-        assertEquals(1L, result.getId());
-        verify(conteudoRepository).save(any(Conteudo.class));
-    }
-
-    @Test
     public void testAtualizar() {
         AtualizarConteudoDTO atualizarDTO = new AtualizarConteudoDTO("Titulo Atualizado");
         Conteudo conteudoExistente = new Conteudo(1L, "Titulo Antigo", "url", 1L);

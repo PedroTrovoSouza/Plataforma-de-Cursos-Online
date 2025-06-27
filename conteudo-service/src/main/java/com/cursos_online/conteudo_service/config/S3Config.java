@@ -17,6 +17,7 @@ public class S3Config {
         return S3Client.builder()
                 .endpointOverride(URI.create("http://localhost:4566"))
                 .region(Region.US_EAST_1)
+                .forcePathStyle(true)
                 .credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create("curso", "curso")
                 ))
