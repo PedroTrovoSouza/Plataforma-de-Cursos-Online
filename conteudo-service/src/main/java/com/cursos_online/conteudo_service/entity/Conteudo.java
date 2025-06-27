@@ -19,13 +19,13 @@ public class Conteudo {
 
     private String titulo;
 
-    private String url_video;
+    private String urlConteudo;
 
     private Long cursoId;
 
-    public Conteudo(String titulo, String url_video, Long cursoId) {
+    public Conteudo(String titulo, String urlConteudo, Long cursoId) {
         this.titulo = titulo;
-        this.url_video = url_video;
+        this.urlConteudo = urlConteudo;
         this.cursoId = cursoId;
     }
 }

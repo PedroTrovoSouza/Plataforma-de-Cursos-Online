@@ -1,5 +1,8 @@
 package com.exemplo.gateway.controller;
 
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.*;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.MultiValueMap;
@@ -18,11 +21,10 @@ public class GatewayController {
     }
 
     @RequestMapping("/{service}/**")
-    public Mono<ResponseEntity<String>> proxy(
+    public Mono<ResponseEntity<byte[]>> proxy(
             @PathVariable String service,
             @RequestHeader HttpHeaders headers,
             @RequestParam(required = false) MultiValueMap<String, String> queryParams,
-            @RequestBody(required = false) Mono<String> body,
             ServerHttpRequest request) {
 
         String url = switch (service) {
@@ -35,7 +37,7 @@ public class GatewayController {
         };
 
         if (url == null) {
-            return Mono.just(ResponseEntity.status(400).build());
+            return Mono.just(ResponseEntity.badRequest().build());
         }
 
         String originalPath = request.getURI().getRawPath();
@@ -50,11 +52,24 @@ public class GatewayController {
                     .orElse("");
         }
 
-        return webClient.method(request.getMethod())
-                .uri(uri)
-                .headers(httpHeaders -> httpHeaders.addAll(headers))
-                .body(body == null ? Mono.empty() : body, String.class)
-                .retrieve()
-                .toEntity(String.class);
+        String finalUri = uri;
+        return request.getBody().collectList().flatMap(dataBuffers -> {
+            DataBuffer joined = new DefaultDataBufferFactory().join(dataBuffers);
+            byte[] bodyBytes = new byte[joined.readableByteCount()];
+            joined.read(bodyBytes);
+            DataBufferUtils.release(joined); // libera o buffer
+
+            return webClient.method(request.getMethod())
+                    .uri(finalUri)
+                    .headers(h -> {
+                        h.addAll(headers);
+                        h.remove(HttpHeaders.TRANSFER_ENCODING);
+                    })
+                    .contentType(headers.getContentType() != null ? headers.getContentType() : MediaType.APPLICATION_OCTET_STREAM)
+                    .bodyValue(bodyBytes)
+                    .retrieve()
+                    .toEntity(byte[].class);
+        });
     }
+
 }
