@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: materiaisdb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Semsenha13
+      MYSQL_ROOT_PASSWORD: Semsenha13
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
+
   localstack:
     image: localstack/localstack
     ports:
