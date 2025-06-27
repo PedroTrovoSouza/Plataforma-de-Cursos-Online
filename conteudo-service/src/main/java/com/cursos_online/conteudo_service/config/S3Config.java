@@ -1,4 +1,4 @@
-package com.cursos_online.usuario_service.config;
+package com.cursos_online.conteudo_service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
