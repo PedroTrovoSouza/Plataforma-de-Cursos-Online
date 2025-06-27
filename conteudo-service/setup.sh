@@ -1,2 +1,2 @@
 #!/bin/bash
-awslocal s3 mb s3://meu-bucketon
+awslocal s3 mb s3://curso-bucket

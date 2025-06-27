@@ -6,6 +6,7 @@ import com.cursos_online.conteudo_service.dto.CursoDTO;
 import com.cursos_online.conteudo_service.entity.Conteudo;
 import com.cursos_online.conteudo_service.repository.ConteudoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class ConteudoService {
         return conteudoRepository.findByCursoId(cursoId);
     }
 
-    public Conteudo salvar(CadastrarConteudoDTO dto) {
+    /*public Conteudo salvar(MultipartFile file) {
 
         Conteudo conteudo = new Conteudo();
         conteudo.setTitulo(dto.titulo());
@@ -51,7 +52,7 @@ public class ConteudoService {
         conteudo.setCursoId(dto.cursoId());
 
         return conteudoRepository.save(conteudo);
-    }
+    }*/
 
     public Conteudo atualizar(Long id, AtualizarConteudoDTO dto) {
         Conteudo conteudo = buscarPorId(id);

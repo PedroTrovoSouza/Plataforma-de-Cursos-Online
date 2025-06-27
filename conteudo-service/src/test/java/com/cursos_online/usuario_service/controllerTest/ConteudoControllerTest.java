@@ -66,21 +66,6 @@ public class ConteudoControllerTest {
     }
 
     @Test
-    public void testSalvarConteudo() throws Exception {
-        CadastrarConteudoDTO cadastrarDTO = new CadastrarConteudoDTO("Novo Conteudo", "urlNovo", null);
-        Conteudo conteudoSalvo = new Conteudo(1L, "Novo Conteudo", "urlNovo", null);
-        Mockito.when(conteudoService.salvar(any(CadastrarConteudoDTO.class))).thenReturn(conteudoSalvo);
-
-        mockMvc.perform(post("/conteudo")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(cadastrarDTO)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.titulo").value("Novo Conteudo"))
-                .andExpect(jsonPath("$.url_video").value("urlNovo"));
-    }
-
-    @Test
     public void testAtualizarConteudo() throws Exception {
         AtualizarConteudoDTO atualizarDTO = new AtualizarConteudoDTO("Titulo Atualizado");
         Conteudo conteudoAtualizado = new Conteudo(1L, "Titulo Atualizado", "url", 1L);
