@@ -118,7 +118,6 @@ public class MatriculaService {
                     dto.setDataMatricula(matricula.getDataMatricula());
                     dto.setStatus(matricula.getStatus());
 
-                    // Chamada ao método com tratamento
                     String nomeCurso = buscarNomeCursoPorId(matricula.getIdCurso());
                     dto.setNomeCurso(nomeCurso);
 
